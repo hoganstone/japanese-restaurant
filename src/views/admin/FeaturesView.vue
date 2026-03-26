@@ -25,15 +25,18 @@ const form = ref(defaultForm())
 const previewSrc = ref('')
 
 const presets = ref([
-  'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=800&q=85',
-  'https://images.unsplash.com/photo-1569558035069-a31a5f9b3a8c?w=800&q=85',
+  'https://images.unsplash.com/photo-1607301405390-d831c242f59b?w=800&q=85',
+  'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&q=85',
   'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85',
   'https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=85',
   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=85',
   'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=85',
   'https://images.unsplash.com/photo-1562802378-063ec186a863?w=800&q=85',
   'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&q=85',
-  'https://images.unsplash.com/photo-nM9SYCT_tx0?w=800&q=85',
+  'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=800&q=85',
+  'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=800&q=85',
+  'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=800&q=85',
+  'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=800&q=85',
 ])
 const newPresetUrl = ref('')
 const failedPresets = ref([])

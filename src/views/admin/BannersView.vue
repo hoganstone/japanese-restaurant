@@ -28,7 +28,7 @@ const defaultForm = () => ({
 const form = ref(defaultForm())
 
 const presets = ref([
-  'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=800&q=80',
+  'https://images.unsplash.com/photo-1607301405390-d831c242f59b?w=800&q=80',
   'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=80',
   'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=800&q=80',
   'https://images.unsplash.com/photo-1562802378-063ec186a863?w=800&q=80',
@@ -36,7 +36,10 @@ const presets = ref([
   'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
   'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&q=80',
   'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80',
-  'https://images.unsplash.com/photo-nM9SYCT_tx0?w=800&q=80',
+  'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=800&q=80',
+  'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=800&q=80',
+  'https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?w=800&q=80',
+  'https://images.unsplash.com/photo-1616645258469-ec681c17f3ee?w=800&q=80',
 ])
 const newPresetUrl = ref('')
 const failedPresets = ref([])

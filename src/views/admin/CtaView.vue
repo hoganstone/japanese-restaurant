@@ -20,14 +20,17 @@ const overlayStyle = computed(() => ({
 
 const presets = ref([
   'https://images.unsplash.com/photo-1553621042-f6e147245754?w=1600&q=85',
-  'https://images.unsplash.com/photo-1569558035069-a31a5f9b3a8c?w=1600&q=85',
+  'https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=1600&q=85',
   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1600&q=85',
   'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85',
   'https://images.unsplash.com/photo-1547592180-85f173990554?w=1600&q=85',
   'https://images.unsplash.com/photo-1562802378-063ec186a863?w=1600&q=85',
   'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1600&q=85',
   'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=85',
-  'https://images.unsplash.com/photo-nM9SYCT_tx0?w=1600&q=85',
+  'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=1600&q=85',
+  'https://images.unsplash.com/photo-1607301405390-d831c242f59b?w=1600&q=85',
+  'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=1600&q=85',
+  'https://images.unsplash.com/photo-1616645258469-ec681c17f3ee?w=1600&q=85',
 ])
 const newPresetUrl = ref('')
 const failedPresets = ref([])
