@@ -142,12 +142,24 @@ const cta = computed(() => ctaStore.data)
     <div class="relative max-w-7xl mx-auto px-4 py-20 text-center text-white">
       <h2 class="text-3xl md:text-4xl font-bold mb-4 drop-shadow">{{ cta.title }}</h2>
       <p class="text-white/80 mb-8 text-lg max-w-xl mx-auto leading-relaxed">{{ cta.desc }}</p>
+      <!-- Internal link -->
       <RouterLink
-        to="/menu"
+        v-if="cta.btnLink && !cta.btnLink.startsWith('http')"
+        :to="cta.btnLink || '/menu'"
         class="inline-flex items-center gap-2 bg-white text-red-700 px-8 py-3.5 rounded-full font-semibold hover:bg-red-50 transition-colors shadow-lg text-base"
       >
         {{ cta.btnText }} <ChevronRight :size="18" />
       </RouterLink>
+      <!-- External link -->
+      <a
+        v-else-if="cta.btnLink"
+        :href="cta.btnLink"
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2 bg-white text-red-700 px-8 py-3.5 rounded-full font-semibold hover:bg-red-50 transition-colors shadow-lg text-base"
+      >
+        {{ cta.btnText }} <ChevronRight :size="18" />
+      </a>
     </div>
   </section>
 </template>

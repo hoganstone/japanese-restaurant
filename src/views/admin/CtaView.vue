@@ -2,7 +2,7 @@
 import { reactive, watch, computed } from 'vue'
 import { useCtaStore } from '@/stores/cta'
 import { useToastStore } from '@/stores/toast'
-import { Save, Check } from 'lucide-vue-next'
+import { Save, Check, ExternalLink, Link } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import { ChevronRight } from 'lucide-vue-next'
 
@@ -38,6 +38,7 @@ function handleReset() {
     title: '準備好享用美食了嗎？',
     desc: '瀏覽我們的菜單，挑選您喜愛的料理，現在就開始您的日式美食之旅',
     btnText: '立即查看菜單',
+    btnLink: '/menu',
     bgImage: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=1600&q=85',
     overlayOpacity: 60,
   }
@@ -114,13 +115,39 @@ function handleReset() {
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
           />
         </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">按鈕文字</label>
-          <input
-            v-model="form.btnText"
-            placeholder="立即查看菜單"
-            class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">按鈕文字</label>
+            <input
+              v-model="form.btnText"
+              placeholder="立即查看菜單"
+              class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">按鈕超連結</label>
+            <div class="flex gap-2">
+              <div class="relative flex-1">
+                <Link class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" :size="13" />
+                <input
+                  v-model="form.btnLink"
+                  placeholder="/menu 或 https://..."
+                  class="w-full h-9 border border-gray-300 rounded-lg pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <a
+                v-if="form.btnLink"
+                :href="form.btnLink"
+                target="_blank"
+                rel="noopener"
+                class="flex items-center px-2.5 h-9 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 shrink-0"
+                title="測試連結"
+              >
+                <ExternalLink :size="14" />
+              </a>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">站內連結用 <code class="bg-gray-100 px-1 rounded">/menu</code>，外部連結用完整網址</p>
+          </div>
         </div>
       </div>
 
