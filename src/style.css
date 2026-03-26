@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #c0392b;
+  --primary-dark: #922b21;
+}
+
+body {
+  font-family: 'Noto Sans TC', 'Noto Sans JP', system-ui, sans-serif;
+}
+
+#app {
+  min-height: 100vh;
+}
