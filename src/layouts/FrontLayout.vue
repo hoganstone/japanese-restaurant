@@ -87,6 +87,28 @@ const navLinks = [
           <div>
             <p class="text-white font-bold text-2xl mb-1">{{ footer.info.brandZh }}</p>
             <p class="text-red-400 text-sm tracking-widest mb-6">{{ footer.info.brandEn }}</p>
+            <!-- Social Icons -->
+            <div v-if="footer.activeSocials().length" class="flex gap-2 mb-5">
+              <a
+                v-for="s in footer.activeSocials()"
+                :key="s.id"
+                :href="s.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                :title="s.label"
+                class="w-9 h-9 rounded-xl flex items-center justify-center transition-transform hover:scale-110 hover:brightness-110 shrink-0"
+                :style="{ backgroundColor: s.bgColor || '#555' }"
+              >
+                <img
+                  v-if="s.icon"
+                  :src="s.icon"
+                  :alt="s.label"
+                  class="w-5 h-5 object-contain"
+                  @error="$event.target.style.display='none'"
+                />
+              </a>
+            </div>
+
             <div class="space-y-3 text-sm">
               <div class="flex items-start gap-3">
                 <MapPin class="text-red-400 shrink-0 mt-0.5" :size="16" />
