@@ -28,6 +28,7 @@ const routes = [
       { path: 'products', name: 'AdminProducts', component: () => import('@/views/admin/ProductsView.vue') },
       { path: 'orders', name: 'AdminOrders', component: () => import('@/views/admin/OrdersView.vue') },
       { path: 'coupons', name: 'AdminCoupons', component: () => import('@/views/admin/CouponsView.vue') },
+      { path: 'banners', name: 'AdminBanners', component: () => import('@/views/admin/BannersView.vue') },
     ]
   },
 ]
