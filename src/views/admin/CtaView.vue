@@ -2,10 +2,12 @@
 import { reactive, watch, computed } from 'vue'
 import { useCtaStore } from '@/stores/cta'
 import { useToastStore } from '@/stores/toast'
+import { useI18n } from 'vue-i18n'
 import { Save, Check, ExternalLink, Link } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import { ChevronRight } from 'lucide-vue-next'
 
+const { t } = useI18n()
 const store = useCtaStore()
 const toast = useToastStore()
 
@@ -29,11 +31,11 @@ const presets = [
 
 function handleSave() {
   store.update({ ...form })
-  toast.success('CTA 區塊已儲存')
+  toast.success(t('toast.ctaSaved'))
 }
 
 function handleReset() {
-  if (!confirm('確定還原為預設值？')) return
+  if (!confirm(t('admin.common.reset') + '?')) return
   const defaults = {
     title: '準備好享用美食了嗎？',
     desc: '瀏覽我們的菜單，挑選您喜愛的料理，現在就開始您的日式美食之旅',
@@ -44,7 +46,7 @@ function handleReset() {
   }
   store.update(defaults)
   Object.assign(form, defaults)
-  toast.info('已還原預設值')
+  toast.success(t('toast.resetDone'))
 }
 </script>
 
@@ -52,15 +54,15 @@ function handleReset() {
   <div class="max-w-3xl">
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">CTA 區塊編輯</h1>
-        <p class="text-sm text-gray-500 mt-1">編輯首頁「號召行動」區塊的文案與背景圖片</p>
+        <h1 class="text-2xl font-bold text-gray-900">{{ t('admin.ctaPage.title') }}</h1>
+        <p class="text-sm text-gray-500 mt-1">{{ t('admin.ctaPage.subtitle') }}</p>
       </div>
       <div class="flex gap-2">
         <button @click="handleReset" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">
-          還原預設
+          {{ t('admin.common.reset') }}
         </button>
         <button @click="handleSave" class="flex items-center gap-2 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg text-sm font-medium cursor-pointer">
-          <Save :size="15" /> 儲存
+          <Save :size="15" /> {{ t('admin.common.save') }}
         </button>
       </div>
     </div>
@@ -70,26 +72,26 @@ function handleReset() {
       <!-- Live Preview -->
       <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
         <p class="text-xs text-gray-400 bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span> 即時預覽
+          <span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span> {{ t('admin.common.preview') }}
         </p>
         <div class="relative min-h-[220px] flex items-center justify-center overflow-hidden">
           <img
             v-if="form.bgImage"
             :src="form.bgImage"
-            alt="背景"
+            alt="bg"
             class="absolute inset-0 w-full h-full object-cover"
             @error="$event.target.src=''"
           />
           <div class="absolute inset-0" :style="overlayStyle" />
           <div class="relative text-center text-white px-6 py-10">
             <h2 class="text-2xl md:text-3xl font-bold mb-3 drop-shadow">
-              {{ form.title || '標題文字' }}
+              {{ form.title || t('admin.ctaPage.mainTitle') }}
             </h2>
             <p class="text-white/80 mb-6 text-sm leading-relaxed max-w-md mx-auto">
-              {{ form.desc || '描述文字' }}
+              {{ form.desc || t('admin.ctaPage.description') }}
             </p>
             <span class="inline-flex items-center gap-2 bg-white text-red-700 px-6 py-2.5 rounded-full font-semibold text-sm shadow">
-              {{ form.btnText || '按鈕文字' }} <ChevronRight :size="16" />
+              {{ form.btnText || t('admin.ctaPage.btnText') }} <ChevronRight :size="16" />
             </span>
           </div>
         </div>
@@ -97,41 +99,38 @@ function handleReset() {
 
       <!-- Text -->
       <div class="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-        <h2 class="font-semibold text-gray-800">文案內容</h2>
+        <h2 class="font-semibold text-gray-800">{{ t('admin.ctaPage.copyContent') }}</h2>
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">主標題</label>
+          <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.ctaPage.mainTitle') }}</label>
           <input
             v-model="form.title"
-            placeholder="準備好享用美食了嗎？"
             class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
           />
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">描述文字</label>
+          <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.ctaPage.description') }}</label>
           <textarea
             v-model="form.desc"
             rows="2"
-            placeholder="瀏覽我們的菜單，挑選您喜愛的料理..."
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
           />
         </div>
         <div class="grid sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">按鈕文字</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.ctaPage.btnText') }}</label>
             <input
               v-model="form.btnText"
-              placeholder="立即查看菜單"
               class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">按鈕超連結</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.ctaPage.btnLink') }}</label>
             <div class="flex gap-2">
               <div class="relative flex-1">
                 <Link class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" :size="13" />
                 <input
                   v-model="form.btnLink"
-                  placeholder="/menu 或 https://..."
+                  placeholder="/menu"
                   class="w-full h-9 border border-gray-300 rounded-lg pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
@@ -141,21 +140,21 @@ function handleReset() {
                 target="_blank"
                 rel="noopener"
                 class="flex items-center px-2.5 h-9 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 shrink-0"
-                title="測試連結"
+                :title="t('admin.ctaPage.testLink')"
               >
                 <ExternalLink :size="14" />
               </a>
             </div>
-            <p class="text-xs text-gray-400 mt-1">站內連結用 <code class="bg-gray-100 px-1 rounded">/menu</code>，外部連結用完整網址</p>
+            <p class="text-xs text-gray-400 mt-1">{{ t('admin.ctaPage.linkHint') }}</p>
           </div>
         </div>
       </div>
 
       <!-- Background Image -->
       <div class="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-        <h2 class="font-semibold text-gray-800">背景圖片</h2>
+        <h2 class="font-semibold text-gray-800">{{ t('admin.ctaPage.bgSettings') }}</h2>
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">圖片網址</label>
+          <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.ctaPage.imageUrl') }}</label>
           <input
             v-model="form.bgImage"
             placeholder="https://images.unsplash.com/..."
@@ -165,7 +164,7 @@ function handleReset() {
 
         <!-- Presets -->
         <div>
-          <p class="text-xs font-medium text-gray-600 mb-2">快速選用</p>
+          <p class="text-xs font-medium text-gray-600 mb-2">{{ t('admin.ctaPage.quickSelect') }}</p>
           <div class="grid grid-cols-4 gap-2">
             <button
               v-for="p in presets"
@@ -185,7 +184,7 @@ function handleReset() {
         <!-- Overlay opacity -->
         <div>
           <label class="block text-xs font-medium text-gray-600 mb-2">
-            深色遮罩濃度：<span class="text-red-600 font-semibold">{{ form.overlayOpacity }}%</span>
+            {{ t('admin.ctaPage.overlayLabel') }}<span class="text-red-600 font-semibold">{{ form.overlayOpacity }}%</span>
           </label>
           <input
             v-model.number="form.overlayOpacity"
@@ -196,16 +195,16 @@ function handleReset() {
             class="w-full accent-red-600 cursor-pointer"
           />
           <div class="flex justify-between text-xs text-gray-400 mt-1">
-            <span>0% 透明</span><span>90% 深色</span>
+            <span>{{ t('admin.ctaPage.overlayTransparent') }}</span><span>{{ t('admin.ctaPage.overlayDark') }}</span>
           </div>
         </div>
       </div>
 
       <!-- Save -->
       <div class="flex justify-end gap-2 pt-1">
-        <button @click="handleReset" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">還原預設</button>
+        <button @click="handleReset" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">{{ t('admin.common.reset') }}</button>
         <button @click="handleSave" class="flex items-center gap-2 bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-lg text-sm font-medium cursor-pointer">
-          <Save :size="15" /> 儲存變更
+          <Save :size="15" /> {{ t('admin.common.saveChanges') }}
         </button>
       </div>
     </div>

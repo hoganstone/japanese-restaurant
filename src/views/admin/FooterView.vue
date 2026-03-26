@@ -2,9 +2,11 @@
 import { reactive, ref, watch } from 'vue'
 import { useFooterStore } from '@/stores/footer'
 import { useToastStore } from '@/stores/toast'
+import { useI18n } from 'vue-i18n'
 import { Save, MapPin, Phone, Clock, Copyright, Building2, ExternalLink, Share2, Plus, Pencil, Trash2, Eye, EyeOff, Check, X } from 'lucide-vue-next'
 import Modal from '@/components/ui/Modal.vue'
 
+const { t } = useI18n()
 const store = useFooterStore()
 const toast = useToastStore()
 
@@ -14,11 +16,11 @@ watch(() => store.info, val => Object.assign(form, val), { deep: true })
 
 function handleSave() {
   store.update({ ...form })
-  toast.success('Footer 已儲存')
+  toast.success(t('toast.footerSaved'))
 }
 
 function handleReset() {
-  if (!confirm('確定要還原為預設值嗎？')) return
+  if (!confirm(t('admin.common.reset') + '?')) return
   const defaults = {
     brandZh: '海石日式料理',
     brandEn: 'SEAISI JAPANESE RESTAURANT',
@@ -32,7 +34,7 @@ function handleReset() {
   }
   store.update(defaults)
   Object.assign(form, defaults)
-  toast.info('已還原預設值')
+  toast.success(t('toast.resetDone'))
 }
 
 // ── Socials ────────────────────────────────────
@@ -77,23 +79,23 @@ function applyPreset(p) {
 
 function handleSaveSocial() {
   if (!socialForm.value.label || !socialForm.value.url) {
-    toast.error('請填寫名稱與連結網址')
+    toast.error(t('toast.socialRequired'))
     return
   }
   if (editingSocialId.value !== null) {
     store.updateSocial(editingSocialId.value, { ...socialForm.value })
-    toast.success('社群連結已更新')
+    toast.success(t('toast.socialUpdated'))
   } else {
     store.addSocial({ ...socialForm.value })
-    toast.success('社群連結已新增')
+    toast.success(t('toast.socialAdded'))
   }
   showSocialModal.value = false
 }
 
 function handleDeleteSocial(id) {
-  if (!confirm('確定刪除此社群連結？')) return
+  if (!confirm(t('admin.bannersPage.deleteConfirm'))) return
   store.removeSocial(id)
-  toast.success('已刪除')
+  toast.success(t('toast.deleted'))
 }
 </script>
 
@@ -101,13 +103,13 @@ function handleDeleteSocial(id) {
   <div class="max-w-3xl">
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Footer 編輯</h1>
-        <p class="text-sm text-gray-500 mt-1">編輯前台頁尾的餐廳資訊、社群連結、地圖與版權文字</p>
+        <h1 class="text-2xl font-bold text-gray-900">{{ t('admin.footerPage.title') }}</h1>
+        <p class="text-sm text-gray-500 mt-1">{{ t('admin.footerPage.subtitle') }}</p>
       </div>
       <div class="flex gap-2">
-        <button @click="handleReset" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">還原預設</button>
+        <button @click="handleReset" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">{{ t('admin.common.reset') }}</button>
         <button @click="handleSave" class="flex items-center gap-2 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg text-sm font-medium cursor-pointer">
-          <Save :size="15" /> 儲存
+          <Save :size="15" /> {{ t('admin.common.save') }}
         </button>
       </div>
     </div>
@@ -117,16 +119,16 @@ function handleDeleteSocial(id) {
       <!-- Brand -->
       <div class="bg-white rounded-xl border border-gray-200 p-5">
         <h2 class="flex items-center gap-2 font-semibold text-gray-800 mb-4">
-          <Building2 :size="16" class="text-red-600" /> 品牌名稱
+          <Building2 :size="16" class="text-red-600" /> {{ t('admin.footerPage.brandName') }}
         </h2>
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">中文名稱</label>
-            <input v-model="form.brandZh" placeholder="海石日式料理" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.footerPage.brandZh') }}</label>
+            <input v-model="form.brandZh" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">英文名稱</label>
-            <input v-model="form.brandEn" placeholder="SEAISI JAPANESE RESTAURANT" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.footerPage.brandEn') }}</label>
+            <input v-model="form.brandEn" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
           </div>
         </div>
       </div>
@@ -135,10 +137,10 @@ function handleDeleteSocial(id) {
       <div class="bg-white rounded-xl border border-gray-200 p-5">
         <div class="flex items-center justify-between mb-4">
           <h2 class="flex items-center gap-2 font-semibold text-gray-800">
-            <Share2 :size="16" class="text-red-600" /> 社群媒體連結
+            <Share2 :size="16" class="text-red-600" /> {{ t('admin.footerPage.socials') }}
           </h2>
           <button @click="openCreateSocial" class="flex items-center gap-1.5 text-xs font-medium text-red-700 hover:text-red-800 border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded-lg cursor-pointer transition-colors">
-            <Plus :size="13" /> 新增
+            <Plus :size="13" /> {{ t('admin.common.add') }}
           </button>
         </div>
 
@@ -155,11 +157,11 @@ function handleDeleteSocial(id) {
 
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900">{{ s.label }}</p>
-              <p class="text-xs text-gray-400 truncate">{{ s.url || '尚未設定連結' }}</p>
+              <p class="text-xs text-gray-400 truncate">{{ s.url || t('admin.footerPage.noLink') }}</p>
             </div>
 
             <div class="flex items-center gap-1 shrink-0">
-              <button @click="store.toggleSocial(s.id); toast.success(s.enabled ? '已隱藏' : '已顯示')" class="p-1.5 rounded-lg hover:bg-white cursor-pointer" :title="s.enabled ? '隱藏' : '顯示'">
+              <button @click="store.toggleSocial(s.id); toast.success(s.enabled ? t('toast.hiddenMsg') : t('toast.shown'))" class="p-1.5 rounded-lg hover:bg-white cursor-pointer">
                 <Eye v-if="s.enabled" :size="14" class="text-green-600" />
                 <EyeOff v-else :size="14" class="text-gray-400" />
               </button>
@@ -172,37 +174,37 @@ function handleDeleteSocial(id) {
             </div>
           </div>
 
-          <p v-if="store.socials.length === 0" class="text-center text-sm text-gray-400 py-4">尚未新增社群連結</p>
+          <p v-if="store.socials.length === 0" class="text-center text-sm text-gray-400 py-4">{{ t('admin.footerPage.noSocials') }}</p>
         </div>
       </div>
 
       <!-- Address -->
       <div class="bg-white rounded-xl border border-gray-200 p-5">
         <h2 class="flex items-center gap-2 font-semibold text-gray-800 mb-4">
-          <MapPin :size="16" class="text-red-600" /> 地址與地圖
+          <MapPin :size="16" class="text-red-600" /> {{ t('admin.footerPage.addressMap') }}
         </h2>
         <div class="space-y-3">
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">餐廳地址</label>
-            <input v-model="form.address" placeholder="新北市八里區渡船頭" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.footerPage.address') }}</label>
+            <input v-model="form.address" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">Google 地圖連結</label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.footerPage.mapLink') }}</label>
             <div class="flex gap-2">
               <input v-model="form.mapLink" placeholder="https://maps.google.com/?q=..." class="flex-1 h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
               <a :href="form.mapLink" target="_blank" rel="noopener" class="flex items-center gap-1 px-3 h-9 border border-gray-300 rounded-lg text-xs text-gray-600 hover:bg-gray-50 shrink-0">
-                <ExternalLink :size="13" /> 測試
+                <ExternalLink :size="13" /> {{ t('admin.footerPage.testLink') }}
               </a>
             </div>
           </div>
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">Google 地圖嵌入網址 <span class="text-gray-400 font-normal">（需含 output=embed）</span></label>
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.footerPage.mapUrl') }} <span class="text-gray-400 font-normal">{{ t('admin.footerPage.mapEmbedHint') }}</span></label>
             <textarea v-model="form.mapUrl" rows="3" placeholder="https://maps.google.com/maps?q=...&output=embed" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none font-mono text-xs" />
           </div>
           <div class="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-            <p class="text-xs text-gray-400 px-3 pt-2 pb-1">地圖預覽</p>
+            <p class="text-xs text-gray-400 px-3 pt-2 pb-1">{{ t('admin.footerPage.mapPreview') }}</p>
             <iframe v-if="form.mapUrl" :src="form.mapUrl" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" />
-            <div v-else class="h-24 flex items-center justify-center text-gray-400 text-sm">請填入嵌入網址</div>
+            <div v-else class="h-24 flex items-center justify-center text-gray-400 text-sm">{{ t('admin.footerPage.mapPlaceholder') }}</div>
           </div>
         </div>
       </div>
@@ -210,10 +212,10 @@ function handleDeleteSocial(id) {
       <!-- Contact -->
       <div class="bg-white rounded-xl border border-gray-200 p-5">
         <h2 class="flex items-center gap-2 font-semibold text-gray-800 mb-4">
-          <Phone :size="16" class="text-red-600" /> 聯絡資訊
+          <Phone :size="16" class="text-red-600" /> {{ t('admin.footerPage.contact') }}
         </h2>
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">訂位電話</label>
+          <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.footerPage.phone') }}</label>
           <input v-model="form.phone" placeholder="02-2610-0000" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
         </div>
       </div>
@@ -221,16 +223,16 @@ function handleDeleteSocial(id) {
       <!-- Hours -->
       <div class="bg-white rounded-xl border border-gray-200 p-5">
         <h2 class="flex items-center gap-2 font-semibold text-gray-800 mb-4">
-          <Clock :size="16" class="text-red-600" /> 營業時間
+          <Clock :size="16" class="text-red-600" /> {{ t('admin.footerPage.hours') }}
         </h2>
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">營業時間</label>
-            <input v-model="form.hours" placeholder="週二至週日　11:30 – 21:00" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.footerPage.hours') }}</label>
+            <input v-model="form.hours" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">休假說明</label>
-            <input v-model="form.holiday" placeholder="週一公休" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+            <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.footerPage.holiday') }}</label>
+            <input v-model="form.holiday" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
           </div>
         </div>
       </div>
@@ -238,14 +240,14 @@ function handleDeleteSocial(id) {
       <!-- Copyright -->
       <div class="bg-white rounded-xl border border-gray-200 p-5">
         <h2 class="flex items-center gap-2 font-semibold text-gray-800 mb-4">
-          <Copyright :size="16" class="text-red-600" /> 版權文字
+          <Copyright :size="16" class="text-red-600" /> {{ t('admin.footerPage.copyright') }}
         </h2>
-        <input v-model="form.copyright" placeholder="© 2026 SEAISI Japanese Restaurant." class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+        <input v-model="form.copyright" class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
       </div>
 
       <!-- Footer Preview -->
       <div class="bg-stone-900 rounded-xl overflow-hidden">
-        <p class="text-xs text-stone-500 px-4 pt-3 pb-1">Footer 預覽</p>
+        <p class="text-xs text-stone-500 px-4 pt-3 pb-1">{{ t('admin.footerPage.previewTitle') }}</p>
         <div class="border-b border-stone-700 px-6 py-6 grid sm:grid-cols-2 gap-6 items-start">
           <div class="text-stone-400 text-sm space-y-3">
             <p class="text-white font-bold text-xl">{{ form.brandZh || '－' }}</p>
@@ -275,27 +277,27 @@ function handleDeleteSocial(id) {
             </div>
           </div>
           <div class="rounded-lg overflow-hidden bg-stone-800 h-32 flex items-center justify-center text-stone-600 text-xs">
-            地圖區塊（儲存後生效）
+            {{ t('admin.footerPage.mapPreviewNote') }}
           </div>
         </div>
         <div class="px-4 py-3 text-center text-xs text-stone-500">{{ form.copyright || '－' }}</div>
       </div>
 
       <div class="flex justify-end gap-2 pt-1">
-        <button @click="handleReset" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">還原預設</button>
+        <button @click="handleReset" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">{{ t('admin.common.reset') }}</button>
         <button @click="handleSave" class="flex items-center gap-2 bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-lg text-sm font-medium cursor-pointer">
-          <Save :size="15" /> 儲存變更
+          <Save :size="15" /> {{ t('admin.common.saveChanges') }}
         </button>
       </div>
     </div>
 
     <!-- Social Modal -->
-    <Modal :show="showSocialModal" :title="editingSocialId !== null ? '編輯社群連結' : '新增社群連結'" @close="showSocialModal = false">
+    <Modal :show="showSocialModal" :title="editingSocialId !== null ? t('admin.footerPage.editSocial') : t('admin.footerPage.addSocial')" @close="showSocialModal = false">
       <div class="space-y-4">
 
         <!-- Preset buttons -->
         <div>
-          <p class="text-xs font-medium text-gray-600 mb-2">快速套用</p>
+          <p class="text-xs font-medium text-gray-600 mb-2">{{ t('admin.footerPage.quickApply') }}</p>
           <div class="flex flex-wrap gap-2">
             <button
               v-for="p in presetSocials"
@@ -313,11 +315,11 @@ function handleDeleteSocial(id) {
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1">名稱 *</label>
+            <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.footerPage.nameLabel') }} *</label>
             <input v-model="socialForm.label" placeholder="Facebook" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1">背景顏色</label>
+            <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.footerPage.bgColor') }}</label>
             <div class="flex gap-2 items-center">
               <input type="color" v-model="socialForm.bgColor" class="w-9 h-9 rounded-md border border-gray-300 cursor-pointer p-0.5" />
               <input v-model="socialForm.bgColor" placeholder="#1877F2" class="flex-1 h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-mono" />
@@ -326,12 +328,12 @@ function handleDeleteSocial(id) {
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">連結網址 *</label>
+          <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.footerPage.url') }} *</label>
           <input v-model="socialForm.url" placeholder="https://www.facebook.com/yourpage" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">圖示圖片網址</label>
+          <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.footerPage.iconUrl') }}</label>
           <input v-model="socialForm.icon" placeholder="https://cdn.simpleicons.org/facebook/ffffff" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
         </div>
 
@@ -341,21 +343,21 @@ function handleDeleteSocial(id) {
             <img v-if="socialForm.icon" :src="socialForm.icon" :alt="socialForm.label" class="w-6 h-6 object-contain" />
           </div>
           <div>
-            <p class="text-white text-sm font-medium">{{ socialForm.label || '名稱' }}</p>
-            <p class="text-stone-400 text-xs truncate max-w-[200px]">{{ socialForm.url || '連結網址' }}</p>
+            <p class="text-white text-sm font-medium">{{ socialForm.label || t('admin.footerPage.nameLabel') }}</p>
+            <p class="text-stone-400 text-xs truncate max-w-[200px]">{{ socialForm.url || t('admin.footerPage.url') }}</p>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
           <input type="checkbox" id="social_enabled" v-model="socialForm.enabled" class="accent-red-700" />
-          <label for="social_enabled" class="text-sm text-gray-700">顯示於 Footer</label>
+          <label for="social_enabled" class="text-sm text-gray-700">{{ t('admin.footerPage.displayInFooter') }}</label>
         </div>
       </div>
 
       <template #footer>
-        <button @click="showSocialModal = false" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">取消</button>
+        <button @click="showSocialModal = false" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">{{ t('admin.common.cancel') }}</button>
         <button @click="handleSaveSocial" class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg text-sm font-medium cursor-pointer">
-          {{ editingSocialId !== null ? '儲存變更' : '新增' }}
+          {{ editingSocialId !== null ? t('admin.common.saveChanges') : t('admin.common.add') }}
         </button>
       </template>
     </Modal>

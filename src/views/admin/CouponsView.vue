@@ -2,11 +2,15 @@
 import { ref, onMounted } from 'vue'
 import { getAdminCoupons, createCoupon, updateCoupon, deleteCoupon } from '@/api'
 import { useToastStore } from '@/stores/toast'
+import { useLocaleStore } from '@/stores/locale'
+import { useI18n } from 'vue-i18n'
 import { Plus, Pencil, Trash2, Loader2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import Modal from '@/components/ui/Modal.vue'
 import Badge from '@/components/ui/Badge.vue'
 
+const { t } = useI18n()
 const toast = useToastStore()
+const localeStore = useLocaleStore()
 const coupons = ref([])
 const pagination = ref({})
 const loading = ref(false)
@@ -54,7 +58,7 @@ function openEdit(coupon) {
 
 async function handleSave() {
   if (!form.value.title || !form.value.code) {
-    toast.error('請填寫優惠券名稱和代碼')
+    toast.error(t('toast.couponRequired'))
     return
   }
   saving.value = true
@@ -66,29 +70,29 @@ async function handleSave() {
     }
     if (editingId.value) {
       await updateCoupon(editingId.value, data)
-      toast.success('優惠券已更新')
+      toast.success(t('toast.couponUpdated'))
     } else {
       await createCoupon(data)
-      toast.success('優惠券已新增')
+      toast.success(t('toast.couponAdded'))
     }
     showModal.value = false
     fetchCoupons(currentPage.value)
   } catch (e) {
-    toast.error(e.response?.data?.message || '操作失敗')
+    toast.error(e.response?.data?.message || t('toast.operationFailed'))
   } finally {
     saving.value = false
   }
 }
 
 async function handleDelete(id) {
-  if (!confirm('確定要刪除此優惠券嗎？')) return
+  if (!confirm(t('admin.couponsPage.deleteConfirm'))) return
   deleting.value = id
   try {
     await deleteCoupon(id)
-    toast.success('優惠券已刪除')
+    toast.success(t('toast.couponDeleted'))
     fetchCoupons(currentPage.value)
   } catch {
-    toast.error('刪除失敗')
+    toast.error(t('toast.deleteFailed'))
   } finally {
     deleting.value = null
   }
@@ -96,16 +100,17 @@ async function handleDelete(id) {
 
 function formatDate(timestamp) {
   if (!timestamp) return '-'
-  return new Date(timestamp * 1000).toLocaleDateString('zh-TW')
+  const localeMap = { 'zh-TW': 'zh-TW', en: 'en-US', ja: 'ja-JP' }
+  return new Date(timestamp * 1000).toLocaleDateString(localeMap[localeStore.locale] || 'zh-TW')
 }
 </script>
 
 <template>
   <div>
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">優惠券管理</h1>
+      <h1 class="text-2xl font-bold text-gray-900">{{ t('admin.couponsPage.title') }}</h1>
       <button @click="openCreate" class="flex items-center gap-2 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer">
-        <Plus :size="16" /> 新增優惠券
+        <Plus :size="16" /> {{ t('admin.couponsPage.addCoupon') }}
       </button>
     </div>
 
@@ -117,12 +122,12 @@ function formatDate(timestamp) {
       <table v-else class="w-full">
         <thead class="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase">名稱</th>
-            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden sm:table-cell">代碼</th>
-            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden md:table-cell">折扣</th>
-            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden md:table-cell">到期日</th>
-            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase">狀態</th>
-            <th class="text-right px-4 py-3 text-xs font-semibold text-gray-600 uppercase">操作</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase">{{ t('admin.couponsPage.name') }}</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden sm:table-cell">{{ t('admin.couponsPage.codeLabel') }}</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden md:table-cell">{{ t('admin.couponsPage.discountLabel') }}</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden md:table-cell">{{ t('admin.couponsPage.expiry') }}</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase">{{ t('admin.productsPage.status') }}</th>
+            <th class="text-right px-4 py-3 text-xs font-semibold text-gray-600 uppercase">{{ t('admin.common.actions') }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -135,7 +140,7 @@ function formatDate(timestamp) {
             <td class="px-4 py-3 hidden md:table-cell text-sm text-gray-500">{{ formatDate(coupon.due_date) }}</td>
             <td class="px-4 py-3">
               <Badge :variant="coupon.is_enabled ? 'success' : 'outline'">
-                {{ coupon.is_enabled ? '啟用' : '停用' }}
+                {{ coupon.is_enabled ? t('admin.common.enabled') : t('admin.common.disabled') }}
               </Badge>
             </td>
             <td class="px-4 py-3 text-right">
@@ -151,7 +156,7 @@ function formatDate(timestamp) {
             </td>
           </tr>
           <tr v-if="coupons.length === 0">
-            <td colspan="6" class="text-center py-12 text-gray-400">目前沒有優惠券</td>
+            <td colspan="6" class="text-center py-12 text-gray-400">{{ t('admin.couponsPage.noCoupons') }}</td>
           </tr>
         </tbody>
       </table>
@@ -160,7 +165,7 @@ function formatDate(timestamp) {
         <button @click="fetchCoupons(currentPage - 1)" :disabled="!pagination.has_pre" class="p-1.5 rounded border border-gray-300 disabled:opacity-40 hover:bg-gray-50 cursor-pointer">
           <ChevronLeft :size="16" />
         </button>
-        <span class="text-sm text-gray-600">第 {{ currentPage }} / {{ pagination.total_pages }} 頁</span>
+        <span class="text-sm text-gray-600">{{ currentPage }} / {{ pagination.total_pages }}</span>
         <button @click="fetchCoupons(currentPage + 1)" :disabled="!pagination.has_next" class="p-1.5 rounded border border-gray-300 disabled:opacity-40 hover:bg-gray-50 cursor-pointer">
           <ChevronRight :size="16" />
         </button>
@@ -168,34 +173,34 @@ function formatDate(timestamp) {
     </div>
 
     <!-- Coupon Modal -->
-    <Modal :show="showModal" :title="editingId ? '編輯優惠券' : '新增優惠券'" @close="showModal = false">
+    <Modal :show="showModal" :title="editingId ? t('admin.couponsPage.editCoupon') : t('admin.couponsPage.addCoupon')" @close="showModal = false">
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">優惠券名稱 *</label>
-          <input v-model="form.title" placeholder="例：春季優惠" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.couponsPage.couponName') }} *</label>
+          <input v-model="form.title" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">優惠碼 *</label>
-          <input v-model="form.code" placeholder="例：SPRING20" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.couponsPage.code') }} *</label>
+          <input v-model="form.code" placeholder="SPRING20" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">折扣百分比 (1-100)</label>
+          <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.couponsPage.discountPercent') }}</label>
           <input v-model="form.percent" type="number" min="1" max="100" placeholder="80" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">到期日</label>
+          <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.couponsPage.expiry') }}</label>
           <input v-model="form.due_date" type="date" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
         </div>
         <div class="flex items-center gap-2">
           <input type="checkbox" id="coupon_enabled" v-model="form.is_enabled" :true-value="1" :false-value="0" class="accent-red-700" />
-          <label for="coupon_enabled" class="text-sm text-gray-700">啟用優惠券</label>
+          <label for="coupon_enabled" class="text-sm text-gray-700">{{ t('admin.couponsPage.enableCoupon') }}</label>
         </div>
       </div>
       <template #footer>
-        <button @click="showModal = false" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">取消</button>
+        <button @click="showModal = false" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">{{ t('admin.common.cancel') }}</button>
         <button @click="handleSave" :disabled="saving" class="flex items-center gap-2 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 cursor-pointer">
           <Loader2 v-if="saving" class="animate-spin" :size="14" />
-          {{ editingId ? '儲存變更' : '新增優惠券' }}
+          {{ editingId ? t('admin.common.saveChanges') : t('admin.couponsPage.addCoupon') }}
         </button>
       </template>
     </Modal>
