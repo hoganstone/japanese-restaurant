@@ -39,6 +39,8 @@ const presets = ref([
   'https://images.unsplash.com/photo-nM9SYCT_tx0?w=800&q=80',
 ])
 const newPresetUrl = ref('')
+const failedPresets = ref([])
+const visiblePresets = computed(() => presets.value.filter(p => !failedPresets.value.includes(p)))
 
 function addPreset() {
   const url = newPresetUrl.value.trim()
@@ -49,6 +51,11 @@ function addPreset() {
 
 function removePreset(url) {
   presets.value = presets.value.filter(p => p !== url)
+  failedPresets.value = failedPresets.value.filter(p => p !== url)
+}
+
+function onPresetError(url) {
+  if (!failedPresets.value.includes(url)) failedPresets.value.push(url)
 }
 
 const previewUrl = computed(() => previewImage.value)
@@ -278,7 +285,7 @@ function handleDelete(id) {
           <p class="text-xs font-medium text-gray-700 mb-2">{{ t('admin.bannersPage.quickSelect') }}</p>
           <div class="grid grid-cols-4 gap-2">
             <div
-              v-for="preset in presets"
+              v-for="preset in visiblePresets"
               :key="preset"
               class="relative rounded-lg overflow-hidden aspect-video border-2 transition-all hover:scale-105 group"
               :class="form.image === preset ? 'border-red-500' : 'border-transparent'"
@@ -288,7 +295,7 @@ function handleDelete(id) {
                 @click="selectPreset(preset)"
                 class="w-full h-full cursor-pointer"
               >
-                <img :src="preset" class="w-full h-full object-cover" />
+                <img :src="preset" class="w-full h-full object-cover" @error="onPresetError(preset)" />
                 <div v-if="form.image === preset" class="absolute inset-0 bg-red-500/30 flex items-center justify-center">
                   <Check class="text-white" :size="16" />
                 </div>
