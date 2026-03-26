@@ -183,6 +183,8 @@ export default {
       isHidden: 'Hidden',
       show: 'Show',
       hide: 'Hide',
+      updatePreview: 'Update Preview',
+      addPreset: 'Add',
     },
 
     productsPage: {

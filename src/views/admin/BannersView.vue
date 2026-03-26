@@ -27,6 +27,26 @@ const defaultForm = () => ({
 })
 const form = ref(defaultForm())
 
+const presets = ref([
+  'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=800&q=80',
+  'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=80',
+  'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=800&q=80',
+  'https://images.unsplash.com/photo-1562802378-063ec186a863?w=800&q=80',
+  'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=800&q=80',
+  'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
+  'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&q=80',
+  'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80',
+  'https://images.unsplash.com/photo-nM9SYCT_tx0?w=800&q=80',
+])
+const newPresetUrl = ref('')
+
+function addPreset() {
+  const url = newPresetUrl.value.trim()
+  if (!url || presets.value.includes(url)) return
+  presets.value.push(url)
+  newPresetUrl.value = ''
+}
+
 // live preview url
 const previewUrl = computed(() =>
   form.value.image || previewImage.value || ''
@@ -208,12 +228,18 @@ function handleDelete(id) {
         <div class="grid sm:grid-cols-2 gap-3">
           <div class="sm:col-span-2">
             <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.bannersPage.imageUrl') }} *</label>
-            <input
-              v-model="form.image"
-              @input="previewImage = form.image"
-              placeholder="https://images.unsplash.com/..."
-              class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
+            <div class="flex gap-2">
+              <input
+                v-model="form.image"
+                placeholder="https://images.unsplash.com/..."
+                class="flex-1 h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <button
+                type="button"
+                @click="previewImage = form.image"
+                class="h-9 px-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-md text-xs text-gray-600 shrink-0 cursor-pointer"
+              >{{ t('admin.common.updatePreview') }}</button>
+            </div>
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.bannersPage.tag') }}</label>
@@ -248,16 +274,7 @@ function handleDelete(id) {
           <p class="text-xs font-medium text-gray-700 mb-2">{{ t('admin.bannersPage.quickSelect') }}</p>
           <div class="grid grid-cols-4 gap-2">
             <button
-              v-for="preset in [
-                'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=800&q=80',
-                'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=80',
-                'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=800&q=80',
-                'https://images.unsplash.com/photo-1562802378-063ec186a863?w=800&q=80',
-                'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=800&q=80',
-                'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
-                'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&q=80',
-                'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80',
-              ]"
+              v-for="preset in presets"
               :key="preset"
               @click="form.image = preset; previewImage = preset"
               class="relative rounded-lg overflow-hidden aspect-video cursor-pointer border-2 transition-all hover:scale-105"
@@ -268,6 +285,19 @@ function handleDelete(id) {
                 <Check class="text-white" :size="16" />
               </div>
             </button>
+          </div>
+          <div class="flex gap-2 mt-2">
+            <input
+              v-model="newPresetUrl"
+              @keyup.enter="addPreset"
+              placeholder="https://images.unsplash.com/..."
+              class="flex-1 h-8 border border-gray-300 rounded-md px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <button
+              type="button"
+              @click="addPreset"
+              class="h-8 px-3 bg-red-700 hover:bg-red-800 text-white rounded-md text-xs shrink-0 cursor-pointer"
+            >{{ t('admin.common.addPreset') }}</button>
           </div>
         </div>
       </div>

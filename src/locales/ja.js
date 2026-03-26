@@ -183,6 +183,8 @@ export default {
       isHidden: '非表示',
       show: '表示',
       hide: '非表示にする',
+      updatePreview: 'プレビュー更新',
+      addPreset: '追加',
     },
 
     productsPage: {

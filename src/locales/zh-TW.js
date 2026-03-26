@@ -183,6 +183,8 @@ export default {
       isHidden: '已隱藏',
       show: '顯示',
       hide: '隱藏',
+      updatePreview: '更新預覽',
+      addPreset: '新增',
     },
 
     productsPage: {

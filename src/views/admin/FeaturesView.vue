@@ -22,8 +22,9 @@ const defaultForm = () => ({
   enabled: true,
 })
 const form = ref(defaultForm())
+const previewSrc = ref('')
 
-const presets = [
+const presets = ref([
   'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=800&q=85',
   'https://images.unsplash.com/photo-1569558035069-a31a5f9b3a8c?w=800&q=85',
   'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85',
@@ -32,17 +33,28 @@ const presets = [
   'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=85',
   'https://images.unsplash.com/photo-1562802378-063ec186a863?w=800&q=85',
   'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&q=85',
-]
+  'https://images.unsplash.com/photo-nM9SYCT_tx0?w=800&q=85',
+])
+const newPresetUrl = ref('')
+
+function addPreset() {
+  const url = newPresetUrl.value.trim()
+  if (!url || presets.value.includes(url)) return
+  presets.value.push(url)
+  newPresetUrl.value = ''
+}
 
 function openCreate() {
   form.value = defaultForm()
   editingId.value = null
+  previewSrc.value = ''
   showModal.value = true
 }
 
 function openEdit(item) {
   form.value = { ...item }
   editingId.value = item.id
+  previewSrc.value = item.image
   showModal.value = true
 }
 
@@ -159,20 +171,20 @@ function handleDelete(id) {
         <!-- Preview card -->
         <div class="relative rounded-xl overflow-hidden bg-gray-100 h-48 group">
           <img
-            v-if="form.image"
-            :src="form.image"
+            v-if="previewSrc"
+            :src="previewSrc"
             alt="preview"
             class="w-full h-full object-cover"
             @error="$event.target.src=''"
           />
-          <div v-if="form.image" class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-4">
+          <div v-if="previewSrc" class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-4">
             <div>
               <p class="text-red-300 text-xs font-semibold mb-0.5">{{ form.subtitle || t('admin.featuresPage.subtitleField') }}</p>
               <p class="text-white font-bold text-xl leading-tight">{{ form.title || t('admin.featuresPage.mainTitle') }}</p>
               <p class="text-white/70 text-xs mt-1 line-clamp-2">{{ form.desc }}</p>
             </div>
           </div>
-          <div v-else class="h-full flex flex-col items-center justify-center text-gray-400 gap-2">
+          <div v-if="!previewSrc" class="h-full flex flex-col items-center justify-center text-gray-400 gap-2">
             <Image :size="32" />
             <span class="text-sm">{{ t('admin.featuresPage.previewPlaceholder') }}</span>
           </div>
@@ -181,11 +193,18 @@ function handleDelete(id) {
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.featuresPage.imageUrl') }} *</label>
-            <input
-              v-model="form.image"
-              placeholder="https://images.unsplash.com/..."
-              class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
+            <div class="flex gap-2">
+              <input
+                v-model="form.image"
+                placeholder="https://images.unsplash.com/..."
+                class="flex-1 h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <button
+                type="button"
+                @click="previewSrc = form.image"
+                class="h-9 px-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-md text-xs text-gray-600 shrink-0 cursor-pointer"
+              >{{ t('admin.common.updatePreview') }}</button>
+            </div>
           </div>
 
           <!-- Preset images -->
@@ -195,7 +214,7 @@ function handleDelete(id) {
               <button
                 v-for="p in presets"
                 :key="p"
-                @click="form.image = p"
+                @click="form.image = p; previewSrc = p"
                 class="relative rounded-lg overflow-hidden aspect-video cursor-pointer border-2 transition-all hover:scale-105"
                 :class="form.image === p ? 'border-red-500' : 'border-transparent'"
               >
@@ -204,6 +223,19 @@ function handleDelete(id) {
                   <Check class="text-white" :size="14" />
                 </div>
               </button>
+            </div>
+            <div class="flex gap-2 mt-2">
+              <input
+                v-model="newPresetUrl"
+                @keyup.enter="addPreset"
+                placeholder="https://images.unsplash.com/..."
+                class="flex-1 h-8 border border-gray-300 rounded-md px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+              <button
+                type="button"
+                @click="addPreset"
+                class="h-8 px-3 bg-red-700 hover:bg-red-800 text-white rounded-md text-xs shrink-0 cursor-pointer"
+              >{{ t('admin.common.addPreset') }}</button>
             </div>
           </div>
 

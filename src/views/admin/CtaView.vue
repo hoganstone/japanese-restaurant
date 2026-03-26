@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, watch, computed } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import { useCtaStore } from '@/stores/cta'
 import { useToastStore } from '@/stores/toast'
 import { useI18n } from 'vue-i18n'
@@ -12,13 +12,14 @@ const store = useCtaStore()
 const toast = useToastStore()
 
 const form = reactive({ ...store.data })
-watch(() => store.data, val => Object.assign(form, val), { deep: true })
+const previewBg = ref(form.bgImage)
+watch(() => store.data, val => { Object.assign(form, val); previewBg.value = val.bgImage }, { deep: true })
 
 const overlayStyle = computed(() => ({
   backgroundColor: `rgba(0,0,0,${form.overlayOpacity / 100})`,
 }))
 
-const presets = [
+const presets = ref([
   'https://images.unsplash.com/photo-1553621042-f6e147245754?w=1600&q=85',
   'https://images.unsplash.com/photo-1569558035069-a31a5f9b3a8c?w=1600&q=85',
   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1600&q=85',
@@ -27,7 +28,16 @@ const presets = [
   'https://images.unsplash.com/photo-1562802378-063ec186a863?w=1600&q=85',
   'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1600&q=85',
   'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=85',
-]
+  'https://images.unsplash.com/photo-nM9SYCT_tx0?w=1600&q=85',
+])
+const newPresetUrl = ref('')
+
+function addPreset() {
+  const url = newPresetUrl.value.trim()
+  if (!url || presets.value.includes(url)) return
+  presets.value.push(url)
+  newPresetUrl.value = ''
+}
 
 function handleSave() {
   store.update({ ...form })
@@ -46,6 +56,7 @@ function handleReset() {
   }
   store.update(defaults)
   Object.assign(form, defaults)
+  previewBg.value = defaults.bgImage
   toast.success(t('toast.resetDone'))
 }
 </script>
@@ -76,8 +87,8 @@ function handleReset() {
         </p>
         <div class="relative min-h-[220px] flex items-center justify-center overflow-hidden">
           <img
-            v-if="form.bgImage"
-            :src="form.bgImage"
+            v-if="previewBg"
+            :src="previewBg"
             alt="bg"
             class="absolute inset-0 w-full h-full object-cover"
             @error="$event.target.src=''"
@@ -155,11 +166,18 @@ function handleReset() {
         <h2 class="font-semibold text-gray-800">{{ t('admin.ctaPage.bgSettings') }}</h2>
         <div>
           <label class="block text-xs font-medium text-gray-600 mb-1">{{ t('admin.ctaPage.imageUrl') }}</label>
-          <input
-            v-model="form.bgImage"
-            placeholder="https://images.unsplash.com/..."
-            class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
+          <div class="flex gap-2">
+            <input
+              v-model="form.bgImage"
+              placeholder="https://images.unsplash.com/..."
+              class="flex-1 h-9 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <button
+              type="button"
+              @click="previewBg = form.bgImage"
+              class="h-9 px-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg text-xs text-gray-600 shrink-0 cursor-pointer"
+            >{{ t('admin.common.updatePreview') }}</button>
+          </div>
         </div>
 
         <!-- Presets -->
@@ -169,7 +187,7 @@ function handleReset() {
             <button
               v-for="p in presets"
               :key="p"
-              @click="form.bgImage = p"
+              @click="form.bgImage = p; previewBg = p"
               class="relative rounded-lg overflow-hidden aspect-video cursor-pointer border-2 transition-all hover:scale-105"
               :class="form.bgImage === p ? 'border-red-500' : 'border-transparent'"
             >
@@ -178,6 +196,19 @@ function handleReset() {
                 <Check class="text-white" :size="14" />
               </div>
             </button>
+          </div>
+          <div class="flex gap-2 mt-2">
+            <input
+              v-model="newPresetUrl"
+              @keyup.enter="addPreset"
+              placeholder="https://images.unsplash.com/..."
+              class="flex-1 h-8 border border-gray-300 rounded-lg px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <button
+              type="button"
+              @click="addPreset"
+              class="h-8 px-3 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs shrink-0 cursor-pointer"
+            >{{ t('admin.common.addPreset') }}</button>
           </div>
         </div>
 
