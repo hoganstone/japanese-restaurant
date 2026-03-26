@@ -31,6 +31,7 @@ const routes = [
       { path: 'banners', name: 'AdminBanners', component: () => import('@/views/admin/BannersView.vue') },
       { path: 'footer', name: 'AdminFooter', component: () => import('@/views/admin/FooterView.vue') },
       { path: 'features', name: 'AdminFeatures', component: () => import('@/views/admin/FeaturesView.vue') },
+      { path: 'cta', name: 'AdminCta', component: () => import('@/views/admin/CtaView.vue') },
     ]
   },
 ]

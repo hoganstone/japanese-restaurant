@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules'
 import { useBannersStore } from '@/stores/banners'
 import { useFeaturesStore } from '@/stores/features'
+import { useCtaStore } from '@/stores/cta'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
@@ -16,6 +17,8 @@ const bannersStore = useBannersStore()
 const featuresStore = useFeaturesStore()
 const slides = computed(() => bannersStore.activeBanners())
 const features = computed(() => featuresStore.activeItems())
+const ctaStore = useCtaStore()
+const cta = computed(() => ctaStore.data)
 </script>
 
 <template>
@@ -121,15 +124,29 @@ const features = computed(() => featuresStore.activeItems())
   </section>
 
   <!-- CTA -->
-  <section class="bg-red-700 text-white">
-    <div class="max-w-7xl mx-auto px-4 py-16 text-center">
-      <h2 class="text-3xl font-bold mb-4">準備好享用美食了嗎？</h2>
-      <p class="text-red-100 mb-8">瀏覽我們的菜單，挑選您喜愛的料理</p>
+  <section class="relative overflow-hidden">
+    <!-- Background image -->
+    <img
+      v-if="cta.bgImage"
+      :src="cta.bgImage"
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover"
+      @error="$event.target.src=''"
+    />
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0"
+      :style="{ backgroundColor: `rgba(0,0,0,${(cta.overlayOpacity ?? 60) / 100})` }"
+    />
+    <!-- Content -->
+    <div class="relative max-w-7xl mx-auto px-4 py-20 text-center text-white">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 drop-shadow">{{ cta.title }}</h2>
+      <p class="text-white/80 mb-8 text-lg max-w-xl mx-auto leading-relaxed">{{ cta.desc }}</p>
       <RouterLink
         to="/menu"
-        class="inline-flex items-center gap-2 bg-white text-red-700 px-8 py-3 rounded-full font-semibold hover:bg-red-50 transition-colors"
+        class="inline-flex items-center gap-2 bg-white text-red-700 px-8 py-3.5 rounded-full font-semibold hover:bg-red-50 transition-colors shadow-lg text-base"
       >
-        查看菜單 <ChevronRight :size="18" />
+        {{ cta.btnText }} <ChevronRight :size="18" />
       </RouterLink>
     </div>
   </section>
