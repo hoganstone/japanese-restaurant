@@ -206,18 +206,12 @@ function handleDelete(id) {
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('admin.featuresPage.imageUrl') }} *</label>
-            <div class="flex gap-2">
-              <input
-                v-model="form.image"
-                placeholder="https://images.unsplash.com/..."
-                class="flex-1 h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-              />
-              <button
-                type="button"
-                @click="applyPreview"
-                class="h-9 px-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-md text-xs text-gray-600 shrink-0 cursor-pointer"
-              >{{ t('admin.common.updatePreview') }}</button>
-            </div>
+            <input
+              v-model="form.image"
+              @input="applyPreview"
+              placeholder="https://images.unsplash.com/..."
+              class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
           </div>
 
           <!-- Preset images -->
@@ -261,6 +255,12 @@ function handleDelete(id) {
                 @click="addPreset"
                 class="h-8 px-3 bg-red-700 hover:bg-red-800 text-white rounded-md text-xs shrink-0 cursor-pointer"
               >{{ t('admin.common.addPreset') }}</button>
+              <button
+                type="button"
+                @click="removePreset(form.image)"
+                :disabled="!presets.includes(form.image)"
+                class="h-8 px-3 bg-gray-100 hover:bg-red-600 hover:text-white border border-gray-300 rounded-md text-xs text-gray-600 shrink-0 cursor-pointer disabled:opacity-30 disabled:cursor-default disabled:hover:bg-gray-100 disabled:hover:text-gray-600"
+              >{{ t('admin.common.delete') }}</button>
             </div>
           </div>
 
