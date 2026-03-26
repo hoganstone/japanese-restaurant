@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { getAdminOrders, updateOrder, deleteOrder, deleteAllOrders } from '@/api'
 import { useToastStore } from '@/stores/toast'
-import { Eye, Trash2, Loader2, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-vue-next'
+import { Eye, Trash2, Loader2, ChevronLeft, ChevronRight, CheckCircle, UtensilsCrossed, ShoppingBag } from 'lucide-vue-next'
 import Modal from '@/components/ui/Modal.vue'
 import Badge from '@/components/ui/Badge.vue'
 
@@ -81,6 +81,14 @@ function formatDate(timestamp) {
   if (!timestamp) return '-'
   return new Date(timestamp * 1000).toLocaleDateString('zh-TW')
 }
+
+function getOrderType(order) {
+  if (order.message?.startsWith('【內用】') || order.user?.name?.startsWith('桌號')) {
+    const match = order.message?.match(/桌號：(.+?)(?:　|$)/)
+    return { type: 'dine-in', label: '內用', table: match?.[1] || '' }
+  }
+  return { type: 'takeout', label: '外帶', table: '' }
+}
 </script>
 
 <template>
@@ -102,6 +110,7 @@ function formatDate(timestamp) {
           <tr>
             <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase">訂單 ID</th>
             <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden sm:table-cell">訂購人</th>
+            <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase">用餐方式</th>
             <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden md:table-cell">日期</th>
             <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase">金額</th>
             <th class="text-left px-4 py-3 text-xs font-semibold text-gray-600 uppercase">付款</th>
@@ -112,6 +121,17 @@ function formatDate(timestamp) {
           <tr v-for="order in orders" :key="order.id" class="hover:bg-gray-50 transition-colors">
             <td class="px-4 py-3 text-xs text-gray-500 font-mono">{{ order.id?.slice(0, 8) }}...</td>
             <td class="px-4 py-3 hidden sm:table-cell text-sm text-gray-700">{{ order.user?.name || '-' }}</td>
+            <td class="px-4 py-3">
+              <div v-if="getOrderType(order).type === 'dine-in'" class="flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full text-xs font-medium">
+                  <UtensilsCrossed :size="11" /> 內用
+                </span>
+                <span v-if="getOrderType(order).table" class="text-xs text-gray-500">桌 {{ getOrderType(order).table }}</span>
+              </div>
+              <span v-else class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full text-xs font-medium">
+                <ShoppingBag :size="11" /> 外帶
+              </span>
+            </td>
             <td class="px-4 py-3 hidden md:table-cell text-sm text-gray-500">{{ formatDate(order.create_at) }}</td>
             <td class="px-4 py-3 text-sm font-medium text-gray-900">NT$ {{ order.total }}</td>
             <td class="px-4 py-3">
@@ -152,6 +172,15 @@ function formatDate(timestamp) {
     <Modal :show="showModal" title="訂單詳情" size="lg" @close="showModal = false">
       <div v-if="selectedOrder">
         <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+          <div class="col-span-2 flex items-center gap-2">
+            <span class="text-gray-500">用餐方式：</span>
+            <span v-if="getOrderType(selectedOrder).type === 'dine-in'" class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded-full text-xs font-medium">
+              <UtensilsCrossed :size="12" /> 內用　桌號：{{ getOrderType(selectedOrder).table || '-' }}
+            </span>
+            <span v-else class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-full text-xs font-medium">
+              <ShoppingBag :size="12" /> 外帶
+            </span>
+          </div>
           <div><span class="text-gray-500">訂購人：</span>{{ selectedOrder.user?.name }}</div>
           <div><span class="text-gray-500">電話：</span>{{ selectedOrder.user?.tel }}</div>
           <div class="col-span-2"><span class="text-gray-500">Email：</span>{{ selectedOrder.user?.email }}</div>
