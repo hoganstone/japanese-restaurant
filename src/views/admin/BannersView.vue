@@ -47,10 +47,20 @@ function addPreset() {
   newPresetUrl.value = ''
 }
 
-// live preview url
-const previewUrl = computed(() =>
-  form.value.image || previewImage.value || ''
-)
+function removePreset(url) {
+  presets.value = presets.value.filter(p => p !== url)
+}
+
+const previewUrl = computed(() => previewImage.value)
+
+function applyPreview() {
+  previewImage.value = form.value.image
+}
+
+function selectPreset(url) {
+  form.value.image = url
+  previewImage.value = url
+}
 
 function openCreate() {
   form.value = defaultForm()
@@ -236,7 +246,7 @@ function handleDelete(id) {
               />
               <button
                 type="button"
-                @click="previewImage = form.image"
+                @click="applyPreview"
                 class="h-9 px-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-md text-xs text-gray-600 shrink-0 cursor-pointer"
               >{{ t('admin.common.updatePreview') }}</button>
             </div>
@@ -273,18 +283,30 @@ function handleDelete(id) {
         <div>
           <p class="text-xs font-medium text-gray-700 mb-2">{{ t('admin.bannersPage.quickSelect') }}</p>
           <div class="grid grid-cols-4 gap-2">
-            <button
+            <div
               v-for="preset in presets"
               :key="preset"
-              @click="form.image = preset; previewImage = preset"
-              class="relative rounded-lg overflow-hidden aspect-video cursor-pointer border-2 transition-all hover:scale-105"
+              class="relative rounded-lg overflow-hidden aspect-video border-2 transition-all hover:scale-105 group"
               :class="form.image === preset ? 'border-red-500' : 'border-transparent'"
             >
-              <img :src="preset" class="w-full h-full object-cover" />
-              <div v-if="form.image === preset" class="absolute inset-0 bg-red-500/30 flex items-center justify-center">
-                <Check class="text-white" :size="16" />
-              </div>
-            </button>
+              <button
+                type="button"
+                @click="selectPreset(preset)"
+                class="w-full h-full cursor-pointer"
+              >
+                <img :src="preset" class="w-full h-full object-cover" />
+                <div v-if="form.image === preset" class="absolute inset-0 bg-red-500/30 flex items-center justify-center">
+                  <Check class="text-white" :size="16" />
+                </div>
+              </button>
+              <button
+                type="button"
+                @click="removePreset(preset)"
+                class="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+              >
+                <X :size="10" />
+              </button>
+            </div>
           </div>
           <div class="flex gap-2 mt-2">
             <input

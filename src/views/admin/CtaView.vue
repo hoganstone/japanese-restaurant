@@ -3,9 +3,8 @@ import { reactive, ref, watch, computed } from 'vue'
 import { useCtaStore } from '@/stores/cta'
 import { useToastStore } from '@/stores/toast'
 import { useI18n } from 'vue-i18n'
-import { Save, Check, ExternalLink, Link } from 'lucide-vue-next'
+import { Save, Check, ExternalLink, Link, X, ChevronRight } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
-import { ChevronRight } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const store = useCtaStore()
@@ -37,6 +36,19 @@ function addPreset() {
   if (!url || presets.value.includes(url)) return
   presets.value.push(url)
   newPresetUrl.value = ''
+}
+
+function removePreset(url) {
+  presets.value = presets.value.filter(p => p !== url)
+}
+
+function applyPreview() {
+  previewBg.value = form.bgImage
+}
+
+function selectPreset(url) {
+  form.bgImage = url
+  previewBg.value = url
 }
 
 function handleSave() {
@@ -174,7 +186,7 @@ function handleReset() {
             />
             <button
               type="button"
-              @click="previewBg = form.bgImage"
+              @click="applyPreview"
               class="h-9 px-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg text-xs text-gray-600 shrink-0 cursor-pointer"
             >{{ t('admin.common.updatePreview') }}</button>
           </div>
@@ -184,18 +196,30 @@ function handleReset() {
         <div>
           <p class="text-xs font-medium text-gray-600 mb-2">{{ t('admin.ctaPage.quickSelect') }}</p>
           <div class="grid grid-cols-4 gap-2">
-            <button
+            <div
               v-for="p in presets"
               :key="p"
-              @click="form.bgImage = p; previewBg = p"
-              class="relative rounded-lg overflow-hidden aspect-video cursor-pointer border-2 transition-all hover:scale-105"
+              class="relative rounded-lg overflow-hidden aspect-video border-2 transition-all hover:scale-105 group"
               :class="form.bgImage === p ? 'border-red-500' : 'border-transparent'"
             >
-              <img :src="p" class="w-full h-full object-cover" />
-              <div v-if="form.bgImage === p" class="absolute inset-0 bg-red-500/30 flex items-center justify-center">
-                <Check class="text-white" :size="14" />
-              </div>
-            </button>
+              <button
+                type="button"
+                @click="selectPreset(p)"
+                class="w-full h-full cursor-pointer"
+              >
+                <img :src="p" class="w-full h-full object-cover" />
+                <div v-if="form.bgImage === p" class="absolute inset-0 bg-red-500/30 flex items-center justify-center">
+                  <Check class="text-white" :size="14" />
+                </div>
+              </button>
+              <button
+                type="button"
+                @click="removePreset(p)"
+                class="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+              >
+                <X :size="10" />
+              </button>
+            </div>
           </div>
           <div class="flex gap-2 mt-2">
             <input
