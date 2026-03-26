@@ -2,9 +2,11 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { ShoppingCart, Menu, X, UtensilsCrossed, MapPin, Phone, Clock } from 'lucide-vue-next'
 import { useCartStore } from '@/stores/cart'
+import { useFooterStore } from '@/stores/footer'
 import { ref } from 'vue'
 
 const cart = useCartStore()
+const footer = useFooterStore()
 const menuOpen = ref(false)
 
 const navLinks = [
@@ -83,16 +85,16 @@ const navLinks = [
         <div class="max-w-7xl mx-auto px-4 py-10 grid md:grid-cols-2 gap-8 items-start">
           <!-- Info -->
           <div>
-            <p class="text-white font-bold text-2xl mb-1">海石日式料理</p>
-            <p class="text-red-400 text-sm tracking-widest mb-6">SEAISI JAPANESE RESTAURANT</p>
+            <p class="text-white font-bold text-2xl mb-1">{{ footer.info.brandZh }}</p>
+            <p class="text-red-400 text-sm tracking-widest mb-6">{{ footer.info.brandEn }}</p>
             <div class="space-y-3 text-sm">
               <div class="flex items-start gap-3">
                 <MapPin class="text-red-400 shrink-0 mt-0.5" :size="16" />
                 <div>
                   <p class="text-white font-medium">餐廳地址</p>
-                  <p class="text-stone-400">新北市八里區渡船頭</p>
+                  <p class="text-stone-400">{{ footer.info.address }}</p>
                   <a
-                    href="https://maps.google.com/?q=新北市八里區渡船頭"
+                    :href="footer.info.mapLink"
                     target="_blank"
                     rel="noopener"
                     class="text-red-400 hover:text-red-300 text-xs mt-0.5 inline-block transition-colors"
@@ -105,15 +107,15 @@ const navLinks = [
                 <Phone class="text-red-400 shrink-0 mt-0.5" :size="16" />
                 <div>
                   <p class="text-white font-medium">訂位電話</p>
-                  <p class="text-stone-400">02-2610-0000</p>
+                  <p class="text-stone-400">{{ footer.info.phone }}</p>
                 </div>
               </div>
               <div class="flex items-start gap-3">
                 <Clock class="text-red-400 shrink-0 mt-0.5" :size="16" />
                 <div>
                   <p class="text-white font-medium">營業時間</p>
-                  <p class="text-stone-400">週二至週日　11:30 – 21:00</p>
-                  <p class="text-stone-500 text-xs">週一公休</p>
+                  <p class="text-stone-400">{{ footer.info.hours }}</p>
+                  <p class="text-stone-500 text-xs">{{ footer.info.holiday }}</p>
                 </div>
               </div>
             </div>
@@ -122,14 +124,14 @@ const navLinks = [
           <!-- Google Map -->
           <div class="rounded-xl overflow-hidden border border-stone-700 shadow-lg">
             <iframe
-              src="https://maps.google.com/maps?q=新北市八里區渡船頭&t=&z=16&ie=UTF8&iwloc=&output=embed"
+              :src="footer.info.mapUrl"
               width="100%"
               height="260"
               style="border:0;"
               allowfullscreen=""
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
-              title="海石日式料理位置 - 新北市八里渡船頭"
+              title="餐廳位置地圖"
             />
           </div>
         </div>
@@ -137,7 +139,7 @@ const navLinks = [
 
       <!-- Copyright -->
       <div class="max-w-7xl mx-auto px-4 py-5 text-center text-xs text-stone-500">
-        © 2026 SEAISI Japanese Restaurant. All rights reserved.
+        {{ footer.info.copyright }}
       </div>
     </footer>
   </div>
