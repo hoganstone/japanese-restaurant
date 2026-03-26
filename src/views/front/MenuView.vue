@@ -6,12 +6,15 @@ import { useToastStore } from '@/stores/toast'
 import { RouterLink } from 'vue-router'
 import { ShoppingCart, Search, Loader2 } from 'lucide-vue-next'
 import Badge from '@/components/ui/Badge.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const products = useProductsStore()
 const cart = useCartStore()
 const toast = useToastStore()
 
-const selectedCategory = ref('全部')
+// null means "All categories"
+const selectedCategory = ref(null)
 const search = ref('')
 const addingId = ref(null)
 
@@ -19,11 +22,11 @@ onMounted(async () => {
   await products.fetchAll()
 })
 
-const allCategories = computed(() => ['全部', ...products.categories])
+const allCategories = computed(() => [null, ...products.categories])
 
 const filtered = computed(() => {
   let list = products.products
-  if (selectedCategory.value !== '全部') {
+  if (selectedCategory.value !== null) {
     list = list.filter(p => p.category === selectedCategory.value)
   }
   if (search.value) {
@@ -37,9 +40,9 @@ async function handleAddToCart(product) {
   addingId.value = product.id
   try {
     await cart.addItem(product.id, 1)
-    toast.success(`已加入購物車：${product.title}`)
+    toast.success(t('toast.addedToCart', { title: product.title }))
   } catch {
-    toast.error('加入失敗，請稍後再試')
+    toast.error(t('toast.addFailed'))
   } finally {
     addingId.value = null
   }
@@ -48,8 +51,8 @@ async function handleAddToCart(product) {
 
 <template>
   <div class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">菜單</h1>
-    <p class="text-gray-500 mb-8">精選日式料理，享受道地風味</p>
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ t('menu.title') }}</h1>
+    <p class="text-gray-500 mb-8">{{ t('menu.subtitle') }}</p>
 
     <!-- Search + Filter -->
     <div class="flex flex-col sm:flex-row gap-4 mb-8">
@@ -57,14 +60,14 @@ async function handleAddToCart(product) {
         <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" :size="16" />
         <input
           v-model="search"
-          placeholder="搜尋料理..."
+          :placeholder="t('menu.searchPlaceholder')"
           class="w-full pl-9 pr-3 h-9 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
         />
       </div>
       <div class="flex gap-2 flex-wrap">
         <button
           v-for="cat in allCategories"
-          :key="cat"
+          :key="cat ?? '__all__'"
           @click="selectedCategory = cat"
           :class="[
             'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
@@ -73,7 +76,7 @@ async function handleAddToCart(product) {
               : 'bg-white border border-gray-300 text-gray-700 hover:border-red-300 hover:text-red-700'
           ]"
         >
-          {{ cat }}
+          {{ cat === null ? t('menu.all') : cat }}
         </button>
       </div>
     </div>
@@ -120,14 +123,14 @@ async function handleAddToCart(product) {
             >
               <Loader2 v-if="addingId === product.id" class="animate-spin" :size="14" />
               <ShoppingCart v-else :size="14" />
-              加入
+              {{ t('menu.add') }}
             </button>
           </div>
         </div>
       </div>
 
       <div v-if="filtered.length === 0" class="col-span-full text-center py-16 text-gray-400">
-        <p class="text-lg">找不到相關料理</p>
+        <p class="text-lg">{{ t('menu.noResult') }}</p>
       </div>
     </div>
   </div>

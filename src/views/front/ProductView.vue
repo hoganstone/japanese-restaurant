@@ -6,7 +6,9 @@ import { useCartStore } from '@/stores/cart'
 import { useToastStore } from '@/stores/toast'
 import { ShoppingCart, ChevronLeft, Loader2, Minus, Plus } from 'lucide-vue-next'
 import Badge from '@/components/ui/Badge.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const cart = useCartStore()
 const toast = useToastStore()
@@ -29,9 +31,9 @@ async function addToCart() {
   adding.value = true
   try {
     await cart.addItem(product.value.id, qty.value)
-    toast.success(`已加入購物車：${product.value.title} x${qty.value}`)
+    toast.success(t('toast.addedToCart', { title: `${product.value.title} x${qty.value}` }))
   } catch {
-    toast.error('加入失敗，請稍後再試')
+    toast.error(t('toast.addFailed'))
   } finally {
     adding.value = false
   }
@@ -41,7 +43,7 @@ async function addToCart() {
 <template>
   <div class="max-w-5xl mx-auto px-4 py-8">
     <RouterLink to="/menu" class="inline-flex items-center gap-1 text-gray-500 hover:text-red-700 mb-6 text-sm">
-      <ChevronLeft :size="16" /> 返回菜單
+      <ChevronLeft :size="16" /> {{ t('product.backToMenu') }}
     </RouterLink>
 
     <div v-if="loading" class="flex justify-center py-20">
@@ -69,7 +71,7 @@ async function addToCart() {
         </div>
 
         <div class="flex items-center gap-4 mb-6">
-          <span class="text-gray-700 font-medium">數量</span>
+          <span class="text-gray-700 font-medium">{{ t('product.qty') }}</span>
           <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
             <button @click="qty = Math.max(1, qty - 1)" class="px-3 py-2 hover:bg-gray-100 cursor-pointer">
               <Minus :size="16" />
@@ -88,11 +90,11 @@ async function addToCart() {
         >
           <Loader2 v-if="adding" class="animate-spin" :size="20" />
           <ShoppingCart v-else :size="20" />
-          加入購物車
+          {{ t('product.addToCart') }}
         </button>
 
         <div v-if="product.content" class="mt-8 p-4 bg-stone-50 rounded-xl">
-          <h3 class="font-semibold text-gray-900 mb-2">料理說明</h3>
+          <h3 class="font-semibold text-gray-900 mb-2">{{ t('product.dishDesc') }}</h3>
           <p class="text-gray-600 text-sm leading-relaxed">{{ product.content }}</p>
         </div>
       </div>

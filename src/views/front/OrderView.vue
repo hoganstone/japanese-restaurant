@@ -4,7 +4,9 @@ import { useRoute, RouterLink } from 'vue-router'
 import { getOrder, payOrder } from '@/api'
 import { useToastStore } from '@/stores/toast'
 import { CheckCircle, Loader2, CreditCard } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const toast = useToastStore()
 const order = ref(null)
@@ -25,11 +27,11 @@ async function handlePay() {
   try {
     const res = await payOrder(route.params.id)
     if (res.data.success) {
-      toast.success('付款成功！')
+      toast.success(t('toast.paySuccess'))
       order.value.is_paid = true
     }
   } catch {
-    toast.error('付款失敗，請稍後再試')
+    toast.error(t('toast.payFailed'))
   } finally {
     paying.value = false
   }
@@ -45,12 +47,12 @@ async function handlePay() {
     <div v-else-if="order">
       <div class="text-center mb-8">
         <CheckCircle class="mx-auto text-green-600 mb-3" :size="56" />
-        <h1 class="text-3xl font-bold text-gray-900">訂單已建立</h1>
-        <p class="text-gray-500 mt-2">訂單編號：{{ order.id }}</p>
+        <h1 class="text-3xl font-bold text-gray-900">{{ t('order.created') }}</h1>
+        <p class="text-gray-500 mt-2">{{ t('order.orderNo') }}{{ order.id }}</p>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-200 p-6 mb-4">
-        <h2 class="font-semibold text-gray-900 mb-4">訂購商品</h2>
+        <h2 class="font-semibold text-gray-900 mb-4">{{ t('order.items') }}</h2>
         <div class="space-y-3">
           <div v-for="(item, key) in order.products" :key="key" class="flex justify-between text-sm">
             <span class="text-gray-700">{{ item.product?.title }} × {{ item.qty }}</span>
@@ -58,24 +60,24 @@ async function handlePay() {
           </div>
         </div>
         <div class="border-t mt-4 pt-4 flex justify-between font-bold text-lg">
-          <span>總計</span>
+          <span>{{ t('order.total') }}</span>
           <span class="text-red-700">NT$ {{ order.final_total }}</span>
         </div>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <h2 class="font-semibold text-gray-900 mb-3">聯絡資料</h2>
+        <h2 class="font-semibold text-gray-900 mb-3">{{ t('order.contactInfo') }}</h2>
         <div class="grid grid-cols-2 gap-3 text-sm">
-          <div><span class="text-gray-500">姓名：</span>{{ order.user?.name }}</div>
-          <div><span class="text-gray-500">電話：</span>{{ order.user?.tel }}</div>
+          <div><span class="text-gray-500">{{ t('order.name') }}</span>{{ order.user?.name }}</div>
+          <div><span class="text-gray-500">{{ t('order.phone') }}</span>{{ order.user?.tel }}</div>
           <div class="col-span-2"><span class="text-gray-500">Email：</span>{{ order.user?.email }}</div>
-          <div class="col-span-2"><span class="text-gray-500">地址：</span>{{ order.user?.address }}</div>
+          <div class="col-span-2"><span class="text-gray-500">{{ t('order.address') }}</span>{{ order.user?.address }}</div>
         </div>
       </div>
 
       <div class="text-center">
         <div v-if="order.is_paid" class="inline-flex items-center gap-2 bg-green-50 text-green-700 px-6 py-3 rounded-full font-semibold">
-          <CheckCircle :size="18" /> 已完成付款
+          <CheckCircle :size="18" /> {{ t('order.paid') }}
         </div>
         <button
           v-else
@@ -85,12 +87,12 @@ async function handlePay() {
         >
           <Loader2 v-if="paying" class="animate-spin" :size="18" />
           <CreditCard v-else :size="18" />
-          立即付款
+          {{ t('order.payNow') }}
         </button>
       </div>
 
       <div class="text-center mt-6">
-        <RouterLink to="/menu" class="text-red-700 hover:underline text-sm">繼續點餐</RouterLink>
+        <RouterLink to="/menu" class="text-red-700 hover:underline text-sm">{{ t('order.continueOrder') }}</RouterLink>
       </div>
     </div>
   </div>

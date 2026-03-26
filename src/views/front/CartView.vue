@@ -1,11 +1,13 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import { useToastStore } from '@/stores/toast'
 import { RouterLink, useRouter } from 'vue-router'
 import { Trash2, Plus, Minus, ShoppingBag, ChevronRight, Loader2, Tag, UtensilsCrossed, ShoppingBag as TakeoutIcon } from 'lucide-vue-next'
 import { createOrder } from '@/api'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const cart = useCartStore()
 const toast = useToastStore()
 const router = useRouter()
@@ -26,10 +28,10 @@ async function handleCoupon() {
   applyingCoupon.value = true
   try {
     const res = await cart.useCoupon(couponCode.value)
-    if (res.success) toast.success('優惠券套用成功！')
-    else toast.error(res.message || '優惠券無效')
+    if (res.success) toast.success(t('toast.couponSuccess'))
+    else toast.error(res.message || t('toast.couponInvalid'))
   } catch {
-    toast.error('優惠券套用失敗')
+    toast.error(t('toast.couponFailed'))
   } finally {
     applyingCoupon.value = false
   }
@@ -38,13 +40,13 @@ async function handleCoupon() {
 async function handleSubmit() {
   if (orderType.value === 'dine-in') {
     if (!dineInForm.value.tableNo) {
-      toast.error('請輸入桌號')
+      toast.error(t('toast.tableRequired'))
       return
     }
   } else {
     const { name, email, tel, address } = takeoutForm.value
     if (!name || !email || !tel || !address) {
-      toast.error('請填寫所有必填欄位')
+      toast.error(t('toast.fillAll'))
       return
     }
   }
@@ -63,12 +65,12 @@ async function handleSubmit() {
 
     const res = await createOrder(orderData)
     if (res.data.success) {
-      toast.success('訂單建立成功！')
+      toast.success(t('toast.orderSuccess'))
       await cart.fetchCart()
       router.push(`/order/${res.data.orderId}`)
     }
   } catch {
-    toast.error('訂單建立失敗，請稍後再試')
+    toast.error(t('toast.orderFailed'))
   } finally {
     submitting.value = false
   }
@@ -77,14 +79,14 @@ async function handleSubmit() {
 
 <template>
   <div class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-8">購物車</h1>
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">{{ t('cart.title') }}</h1>
 
     <!-- Empty cart -->
     <div v-if="cart.cart.carts?.length === 0" class="text-center py-20">
       <ShoppingBag class="mx-auto text-gray-300 mb-4" :size="64" />
-      <p class="text-gray-500 text-lg mb-6">購物車是空的</p>
+      <p class="text-gray-500 text-lg mb-6">{{ t('cart.empty') }}</p>
       <RouterLink to="/menu" class="inline-flex items-center gap-2 bg-red-700 text-white px-6 py-3 rounded-full font-medium hover:bg-red-800 transition-colors">
-        前往菜單 <ChevronRight :size="18" />
+        {{ t('cart.goToMenu') }} <ChevronRight :size="18" />
       </RouterLink>
     </div>
 
@@ -130,12 +132,12 @@ async function handleSubmit() {
         <!-- Coupon -->
         <div class="bg-white rounded-xl border border-gray-200 p-4">
           <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-            <Tag :size="16" /> 優惠券
+            <Tag :size="16" /> {{ t('cart.coupon') }}
           </h3>
           <div class="flex gap-2">
             <input
               v-model="couponCode"
-              placeholder="請輸入優惠碼"
+              :placeholder="t('cart.couponPlaceholder')"
               class="flex-1 h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
             />
             <button
@@ -144,7 +146,7 @@ async function handleSubmit() {
               class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-60 cursor-pointer"
             >
               <Loader2 v-if="applyingCoupon" class="animate-spin" :size="14" />
-              <span v-else>套用</span>
+              <span v-else>{{ t('cart.apply') }}</span>
             </button>
           </div>
         </div>
@@ -155,23 +157,23 @@ async function handleSubmit() {
 
         <!-- Order Summary -->
         <div class="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 class="font-semibold text-gray-900 mb-4">訂單摘要</h3>
+          <h3 class="font-semibold text-gray-900 mb-4">{{ t('cart.summary') }}</h3>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between text-gray-600">
-              <span>小計</span><span>NT$ {{ cart.total }}</span>
+              <span>{{ t('cart.subtotal') }}</span><span>NT$ {{ cart.total }}</span>
             </div>
             <div v-if="cart.total !== cart.finalTotal" class="flex justify-between text-green-700">
-              <span>優惠折扣</span><span>-NT$ {{ cart.total - cart.finalTotal }}</span>
+              <span>{{ t('cart.discount') }}</span><span>-NT$ {{ cart.total - cart.finalTotal }}</span>
             </div>
             <div class="border-t pt-2 flex justify-between font-bold text-lg text-gray-900">
-              <span>總計</span><span class="text-red-700">NT$ {{ cart.finalTotal }}</span>
+              <span>{{ t('cart.total') }}</span><span class="text-red-700">NT$ {{ cart.finalTotal }}</span>
             </div>
           </div>
         </div>
 
         <!-- Order Type Toggle -->
         <div class="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 class="font-semibold text-gray-900 mb-3">用餐方式</h3>
+          <h3 class="font-semibold text-gray-900 mb-3">{{ t('cart.diningMethod') }}</h3>
           <div class="grid grid-cols-2 gap-2">
             <button
               @click="orderType = 'dine-in'"
@@ -183,8 +185,8 @@ async function handleSubmit() {
               ]"
             >
               <UtensilsCrossed :size="24" />
-              <span class="text-sm font-semibold">內用</span>
-              <span class="text-xs opacity-70">填寫桌號即可</span>
+              <span class="text-sm font-semibold">{{ t('cart.dineIn') }}</span>
+              <span class="text-xs opacity-70">{{ t('cart.dineInSub') }}</span>
             </button>
             <button
               @click="orderType = 'takeout'"
@@ -196,8 +198,8 @@ async function handleSubmit() {
               ]"
             >
               <ShoppingBag :size="24" />
-              <span class="text-sm font-semibold">外帶</span>
-              <span class="text-xs opacity-70">填寫聯絡資料</span>
+              <span class="text-sm font-semibold">{{ t('cart.takeout') }}</span>
+              <span class="text-xs opacity-70">{{ t('cart.takeoutSub') }}</span>
             </button>
           </div>
         </div>
@@ -205,22 +207,22 @@ async function handleSubmit() {
         <!-- Dine-in Form -->
         <div v-if="orderType === 'dine-in'" class="bg-white rounded-xl border border-red-100 p-5">
           <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <UtensilsCrossed class="text-red-600" :size="16" /> 內用資料
+            <UtensilsCrossed class="text-red-600" :size="16" /> {{ t('cart.dineInInfo') }}
           </h3>
           <div class="space-y-3">
             <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">桌號 *</label>
+              <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('cart.tableNo') }} *</label>
               <input
                 v-model="dineInForm.tableNo"
-                placeholder="請輸入桌號，例：A3、05"
+                :placeholder="t('cart.tableNoPlaceholder')"
                 class="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
             <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">備註</label>
+              <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('cart.notes') }}</label>
               <textarea
                 v-model="message"
-                placeholder="過敏食材、特殊需求..."
+                :placeholder="t('cart.notesPlaceholder')"
                 rows="2"
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
               />
@@ -231,28 +233,28 @@ async function handleSubmit() {
         <!-- Takeout Form -->
         <div v-if="orderType === 'takeout'" class="bg-white rounded-xl border border-amber-100 p-5">
           <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <ShoppingBag class="text-amber-600" :size="16" /> 外帶資料
+            <ShoppingBag class="text-amber-600" :size="16" /> {{ t('cart.takeoutInfo') }}
           </h3>
           <div class="space-y-3">
             <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">姓名 *</label>
-              <input v-model="takeoutForm.name" placeholder="請輸入姓名" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+              <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('cart.name') }} *</label>
+              <input v-model="takeoutForm.name" :placeholder="t('cart.namePlaceholder')" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">電話 *</label>
-              <input v-model="takeoutForm.tel" placeholder="請輸入電話" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+              <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('cart.phone') }} *</label>
+              <input v-model="takeoutForm.tel" :placeholder="t('cart.phonePlaceholder')" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
             </div>
             <div>
               <label class="block text-xs font-medium text-gray-700 mb-1">Email *</label>
-              <input v-model="takeoutForm.email" type="email" placeholder="請輸入 Email" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+              <input v-model="takeoutForm.email" type="email" :placeholder="t('cart.emailPlaceholder')" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">取餐地址 *</label>
-              <input v-model="takeoutForm.address" placeholder="請輸入地址" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+              <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('cart.pickupAddress') }} *</label>
+              <input v-model="takeoutForm.address" :placeholder="t('cart.addressPlaceholder')" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">備註</label>
-              <textarea v-model="message" placeholder="過敏食材、特殊需求..." rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" />
+              <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('cart.notes') }}</label>
+              <textarea v-model="message" :placeholder="t('cart.notesPlaceholder')" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none" />
             </div>
           </div>
         </div>
@@ -264,7 +266,7 @@ async function handleSubmit() {
           class="w-full flex items-center justify-center gap-2 bg-red-700 hover:bg-red-800 text-white py-3.5 rounded-xl font-semibold text-lg transition-colors disabled:opacity-60 cursor-pointer"
         >
           <Loader2 v-if="submitting" class="animate-spin" :size="20" />
-          <span>{{ orderType === 'dine-in' ? '確認內用下單' : '確認外帶下單' }}</span>
+          <span>{{ orderType === 'dine-in' ? t('cart.submitDineIn') : t('cart.submitTakeout') }}</span>
         </button>
       </div>
     </div>

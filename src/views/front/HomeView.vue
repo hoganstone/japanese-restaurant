@@ -7,11 +7,13 @@ import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules'
 import { useBannersStore } from '@/stores/banners'
 import { useFeaturesStore } from '@/stores/features'
 import { useCtaStore } from '@/stores/cta'
+import { useI18n } from 'vue-i18n'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import 'swiper/css/effect-fade'
 
+const { t } = useI18n()
 const modules = [Autoplay, Pagination, Navigation, EffectFade]
 const bannersStore = useBannersStore()
 const featuresStore = useFeaturesStore()
@@ -63,7 +65,7 @@ const cta = computed(() => ctaStore.data)
                   to="/menu"
                   class="inline-flex items-center gap-2 bg-red-700 hover:bg-red-800 text-white px-7 py-3.5 rounded-full font-semibold text-base transition-colors shadow-lg"
                 >
-                  立即點餐 <ChevronRight :size="18" />
+                  {{ t('home.orderNow') }} <ChevronRight :size="18" />
                 </RouterLink>
               </div>
             </div>
@@ -74,7 +76,7 @@ const cta = computed(() => ctaStore.data)
 
     <!-- Fallback if no banners -->
     <div v-else class="h-[400px] bg-stone-900 flex items-center justify-center text-white">
-      <p class="text-stone-400">尚未設定輪播圖</p>
+      <p class="text-stone-400">{{ t('home.noBanners') }}</p>
     </div>
 
     <!-- Brand badge -->
@@ -90,7 +92,7 @@ const cta = computed(() => ctaStore.data)
     <div class="max-w-7xl mx-auto px-4">
       <div class="text-center mb-10">
         <p class="text-red-600 text-sm font-semibold tracking-widest uppercase mb-2">Our Features</p>
-        <h2 class="text-3xl font-bold text-gray-900">為什麼選擇我們</h2>
+        <h2 class="text-3xl font-bold text-gray-900">{{ t('menu.subtitle') }}</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div
@@ -112,7 +114,6 @@ const cta = computed(() => ctaStore.data)
             <div class="p-5 w-full">
               <p class="text-red-300 text-xs font-semibold tracking-wide mb-1">{{ item.subtitle }}</p>
               <h3 class="text-white font-bold text-xl mb-2 leading-tight">{{ item.title }}</h3>
-              <!-- desc shown on hover -->
               <p class="text-white/80 text-sm leading-relaxed max-h-0 group-hover:max-h-32 overflow-hidden transition-all duration-500 ease-in-out">
                 {{ item.desc }}
               </p>
@@ -125,7 +126,6 @@ const cta = computed(() => ctaStore.data)
 
   <!-- CTA -->
   <section class="relative overflow-hidden">
-    <!-- Background image -->
     <img
       v-if="cta.bgImage"
       :src="cta.bgImage"
@@ -133,16 +133,13 @@ const cta = computed(() => ctaStore.data)
       class="absolute inset-0 w-full h-full object-cover"
       @error="$event.target.src=''"
     />
-    <!-- Overlay -->
     <div
       class="absolute inset-0"
       :style="{ backgroundColor: `rgba(0,0,0,${(cta.overlayOpacity ?? 60) / 100})` }"
     />
-    <!-- Content -->
     <div class="relative max-w-7xl mx-auto px-4 py-20 text-center text-white">
       <h2 class="text-3xl md:text-4xl font-bold mb-4 drop-shadow">{{ cta.title }}</h2>
       <p class="text-white/80 mb-8 text-lg max-w-xl mx-auto leading-relaxed">{{ cta.desc }}</p>
-      <!-- Internal link -->
       <RouterLink
         v-if="cta.btnLink && !cta.btnLink.startsWith('http')"
         :to="cta.btnLink || '/menu'"
@@ -150,7 +147,6 @@ const cta = computed(() => ctaStore.data)
       >
         {{ cta.btnText }} <ChevronRight :size="18" />
       </RouterLink>
-      <!-- External link -->
       <a
         v-else-if="cta.btnLink"
         :href="cta.btnLink"
