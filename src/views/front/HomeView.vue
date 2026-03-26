@@ -1,10 +1,11 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { ChevronRight, Star, Clock, Award } from 'lucide-vue-next'
+import { ChevronRight } from 'lucide-vue-next'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules'
 import { useBannersStore } from '@/stores/banners'
+import { useFeaturesStore } from '@/stores/features'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
@@ -12,7 +13,9 @@ import 'swiper/css/effect-fade'
 
 const modules = [Autoplay, Pagination, Navigation, EffectFade]
 const bannersStore = useBannersStore()
+const featuresStore = useFeaturesStore()
 const slides = computed(() => bannersStore.activeBanners())
+const features = computed(() => featuresStore.activeItems())
 </script>
 
 <template>
@@ -80,28 +83,39 @@ const slides = computed(() => bannersStore.activeBanners())
   </section>
 
   <!-- Features -->
-  <section class="max-w-7xl mx-auto px-4 py-16">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="text-center p-6">
-        <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Star class="text-red-700" :size="24" />
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">精選食材</h3>
-        <p class="text-gray-600 text-sm">嚴選新鮮食材，每日直送，確保最高品質</p>
+  <section v-if="features.length" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-10">
+        <p class="text-red-600 text-sm font-semibold tracking-widest uppercase mb-2">Our Features</p>
+        <h2 class="text-3xl font-bold text-gray-900">為什麼選擇我們</h2>
       </div>
-      <div class="text-center p-6">
-        <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Clock class="text-amber-700" :size="24" />
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          v-for="item in features"
+          :key="item.id"
+          class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 cursor-default"
+        >
+          <!-- Image -->
+          <div class="aspect-[4/3] overflow-hidden">
+            <img
+              :src="item.image"
+              :alt="item.title"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              @error="$event.target.src='https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=80'"
+            />
+          </div>
+          <!-- Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end">
+            <div class="p-5 w-full">
+              <p class="text-red-300 text-xs font-semibold tracking-wide mb-1">{{ item.subtitle }}</p>
+              <h3 class="text-white font-bold text-xl mb-2 leading-tight">{{ item.title }}</h3>
+              <!-- desc shown on hover -->
+              <p class="text-white/80 text-sm leading-relaxed max-h-0 group-hover:max-h-32 overflow-hidden transition-all duration-500 ease-in-out">
+                {{ item.desc }}
+              </p>
+            </div>
+          </div>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">快速出餐</h3>
-        <p class="text-gray-600 text-sm">專業廚師團隊，確保每道料理新鮮即時</p>
-      </div>
-      <div class="text-center p-6">
-        <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Award class="text-green-700" :size="24" />
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">道地口味</h3>
-        <p class="text-gray-600 text-sm">傳承正宗日式料理技藝，還原最道地的風味</p>
       </div>
     </div>
   </section>

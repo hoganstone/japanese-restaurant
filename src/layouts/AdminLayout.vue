@@ -2,7 +2,7 @@
 import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
-import { Package, ShoppingBag, Tag, LogOut, UtensilsCrossed, Menu, X, ExternalLink, Images, LayoutTemplate } from 'lucide-vue-next'
+import { Package, ShoppingBag, Tag, LogOut, UtensilsCrossed, Menu, X, ExternalLink, Images, LayoutTemplate, Sparkles } from 'lucide-vue-next'
 import { ref } from 'vue'
 
 const auth = useAuthStore()
@@ -16,6 +16,7 @@ const navItems = [
   { to: '/admin/orders', icon: ShoppingBag, label: '訂單管理' },
   { to: '/admin/coupons', icon: Tag, label: '優惠券管理' },
   { to: '/admin/banners', icon: Images, label: '輪播圖管理' },
+  { to: '/admin/features', icon: Sparkles, label: '特色區塊' },
   { to: '/admin/footer', icon: LayoutTemplate, label: 'Footer 編輯' },
 ]
 
