@@ -70,7 +70,7 @@ async function handlePay() {
         <div class="grid grid-cols-2 gap-3 text-sm">
           <div><span class="text-gray-500">{{ t('order.name') }}</span>{{ order.user?.name }}</div>
           <div><span class="text-gray-500">{{ t('order.phone') }}</span>{{ order.user?.tel }}</div>
-          <div class="col-span-2"><span class="text-gray-500">Email：</span>{{ order.user?.email }}</div>
+          <div class="col-span-2"><span class="text-gray-500">{{ t('order.email') }}</span>{{ order.user?.email }}</div>
           <div class="col-span-2"><span class="text-gray-500">{{ t('order.address') }}</span>{{ order.user?.address }}</div>
         </div>
       </div>

@@ -4,13 +4,17 @@ import { ShoppingCart, Menu, X, UtensilsCrossed, MapPin, Phone, Clock, Globe, Ch
 import { useCartStore } from '@/stores/cart'
 import { useFooterStore } from '@/stores/footer'
 import { useLocaleStore } from '@/stores/locale'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const cart = useCartStore()
 const footer = useFooterStore()
 const localeStore = useLocaleStore()
 const { t } = useI18n()
+
+const brandName = computed(() =>
+  localeStore.locale === 'en' ? footer.info.brandEn : footer.info.brandZh
+)
 const menuOpen = ref(false)
 const langOpen = ref(false)
 const langBtnRef = ref(null)
@@ -45,7 +49,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
           <!-- Logo -->
           <RouterLink to="/" class="flex items-center gap-2 text-red-700 font-bold text-xl">
             <UtensilsCrossed :size="28" />
-            <span class="hidden sm:block">海石日式料理</span>
+            <span class="hidden sm:block">{{ brandName }}</span>
           </RouterLink>
 
           <!-- Desktop Nav -->
@@ -215,7 +219,7 @@ onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
               allowfullscreen=""
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
-              title="餐廳位置地圖"
+              :title="t('footer.mapTitle')"
             />
           </div>
         </div>

@@ -12,11 +12,13 @@ export default {
     reservationPhone: '訂位電話',
     businessHours: '營業時間',
     openMap: '在 Google 地圖中開啟 →',
+    mapTitle: '餐廳位置地圖',
   },
 
   home: {
     orderNow: '立即點餐',
     noBanners: '尚未設定輪播圖',
+    ourFeatures: '品牌特色',
   },
 
   menu: {
@@ -61,6 +63,7 @@ export default {
     namePlaceholder: '請輸入姓名',
     phone: '電話',
     phonePlaceholder: '請輸入電話',
+    email: 'Email',
     emailPlaceholder: '請輸入 Email',
     pickupAddress: '取餐地址',
     addressPlaceholder: '請輸入地址',
@@ -76,6 +79,7 @@ export default {
     contactInfo: '聯絡資料',
     name: '姓名：',
     phone: '電話：',
+    email: 'Email：',
     address: '地址：',
     paid: '已完成付款',
     payNow: '立即付款',
@@ -243,6 +247,7 @@ export default {
       expiry: '到期日',
       noCoupons: '目前沒有優惠券',
       discountPercent: '折扣百分比 (1-100)',
+      discountDisplay: '{n}% 折扣',
       enableCoupon: '啟用優惠券',
       deleteConfirm: '確定要刪除此優惠券嗎？',
     },
@@ -306,6 +311,9 @@ export default {
       bgSettings: '背景圖片',
       testLink: '測試連結',
       linkHint: '站內連結用 /menu，外部連結用完整網址',
+      defaultTitle: '準備好享用美食了嗎？',
+      defaultDesc: '瀏覽我們的菜單，挑選您喜愛的料理，現在就開始您的日式美食之旅',
+      defaultBtnText: '立即查看菜單',
     },
 
     footerPage: {

@@ -245,7 +245,7 @@ async function handleSubmit() {
               <input v-model="takeoutForm.tel" :placeholder="t('cart.phonePlaceholder')" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">Email *</label>
+              <label class="block text-xs font-medium text-gray-700 mb-1">{{ t('cart.email') }} *</label>
               <input v-model="takeoutForm.email" type="email" :placeholder="t('cart.emailPlaceholder')" class="w-full h-9 border border-gray-300 rounded-md px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
             </div>
             <div>

@@ -188,7 +188,7 @@ function getOrderType(order) {
           </div>
           <div><span class="text-gray-500">{{ t('admin.ordersPage.customerDetail') }}：</span>{{ selectedOrder.user?.name }}</div>
           <div><span class="text-gray-500">{{ t('admin.ordersPage.phoneLabel') }}：</span>{{ selectedOrder.user?.tel }}</div>
-          <div class="col-span-2"><span class="text-gray-500">Email：</span>{{ selectedOrder.user?.email }}</div>
+          <div class="col-span-2"><span class="text-gray-500">{{ t('order.email') }}</span>{{ selectedOrder.user?.email }}</div>
           <div class="col-span-2"><span class="text-gray-500">{{ t('order.address') }}</span>{{ selectedOrder.user?.address }}</div>
           <div v-if="selectedOrder.message" class="col-span-2"><span class="text-gray-500">{{ t('admin.ordersPage.notesLabel') }}：</span>{{ selectedOrder.message }}</div>
         </div>

@@ -12,11 +12,13 @@ export default {
     reservationPhone: '予約電話',
     businessHours: '営業時間',
     openMap: 'Google マップで開く →',
+    mapTitle: 'レストランの地図',
   },
 
   home: {
     orderNow: '今すぐ注文',
     noBanners: 'バナー未設定',
+    ourFeatures: 'ブランド特集',
   },
 
   menu: {
@@ -61,6 +63,7 @@ export default {
     namePlaceholder: 'お名前を入力',
     phone: '電話番号',
     phonePlaceholder: '電話番号を入力',
+    email: 'メール',
     emailPlaceholder: 'メールアドレスを入力',
     pickupAddress: '受取住所',
     addressPlaceholder: '住所を入力',
@@ -76,6 +79,7 @@ export default {
     contactInfo: '連絡先',
     name: '氏名：',
     phone: '電話：',
+    email: 'メール：',
     address: '住所：',
     paid: 'お支払い完了',
     payNow: '今すぐ支払う',
@@ -243,6 +247,7 @@ export default {
       expiry: '有効期限',
       noCoupons: 'クーポンはまだありません',
       discountPercent: '割引率 (1-100)',
+      discountDisplay: '{n}% 割引',
       enableCoupon: 'クーポンを有効にする',
       deleteConfirm: 'このクーポンを削除しますか？',
     },
@@ -306,6 +311,9 @@ export default {
       bgSettings: '背景設定',
       testLink: 'リンクテスト',
       linkHint: '内部リンクは /menu、外部リンクは完全なURLを使用',
+      defaultTitle: '美食を楽しむ準備はできていますか？',
+      defaultDesc: 'メニューをご覧いただき、お好みの料理をお選びください。今すぐ日本料理の旅を始めましょう',
+      defaultBtnText: 'メニューを見る',
     },
 
     footerPage: {

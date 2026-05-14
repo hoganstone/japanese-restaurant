@@ -7,6 +7,8 @@ import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules'
 import { useBannersStore } from '@/stores/banners'
 import { useFeaturesStore } from '@/stores/features'
 import { useCtaStore } from '@/stores/cta'
+import { useFooterStore } from '@/stores/footer'
+import { useLocaleStore } from '@/stores/locale'
 import { useI18n } from 'vue-i18n'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -21,6 +23,11 @@ const slides = computed(() => bannersStore.activeBanners())
 const features = computed(() => featuresStore.activeItems())
 const ctaStore = useCtaStore()
 const cta = computed(() => ctaStore.data)
+const footerStore = useFooterStore()
+const localeStore = useLocaleStore()
+const brandName = computed(() =>
+  localeStore.locale === 'en' ? footerStore.info.brandEn : footerStore.info.brandZh
+)
 </script>
 
 <template>
@@ -82,7 +89,7 @@ const cta = computed(() => ctaStore.data)
     <!-- Brand badge -->
     <div class="absolute top-6 right-6 z-20 hidden md:block">
       <div class="bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl px-4 py-2 text-sm font-medium">
-        海石日式料理
+        {{ brandName }}
       </div>
     </div>
   </section>
@@ -91,7 +98,7 @@ const cta = computed(() => ctaStore.data)
   <section v-if="features.length" class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4">
       <div class="text-center mb-10">
-        <p class="text-red-600 text-sm font-semibold tracking-widest uppercase mb-2">Our Features</p>
+        <p class="text-red-600 text-sm font-semibold tracking-widest uppercase mb-2">{{ t('home.ourFeatures') }}</p>
         <h2 class="text-3xl font-bold text-gray-900">{{ t('menu.subtitle') }}</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

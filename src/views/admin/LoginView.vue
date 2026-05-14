@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import { useLocaleStore } from '@/stores/locale'
+import { useFooterStore } from '@/stores/footer'
 import { useRouter } from 'vue-router'
 import { Loader2, UtensilsCrossed, Globe } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
@@ -11,7 +12,12 @@ const { t } = useI18n()
 const auth = useAuthStore()
 const toast = useToastStore()
 const localeStore = useLocaleStore()
+const footerStore = useFooterStore()
 const router = useRouter()
+
+const brandName = computed(() =>
+  localeStore.locale === 'en' ? footerStore.info.brandEn : footerStore.info.brandZh
+)
 
 const email = ref('')
 const password = ref('')
@@ -69,7 +75,7 @@ async function handleLogin() {
       <div class="text-center mb-8">
         <div class="inline-flex items-center gap-2 text-white text-2xl font-bold mb-2">
           <UtensilsCrossed :size="28" class="text-red-400" />
-          海石日式料理
+          {{ brandName }}
         </div>
         <p class="text-stone-400 text-sm">{{ t('admin.login.subtitle') }}</p>
       </div>

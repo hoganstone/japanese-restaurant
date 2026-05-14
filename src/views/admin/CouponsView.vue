@@ -136,7 +136,7 @@ function formatDate(timestamp) {
             <td class="px-4 py-3 hidden sm:table-cell">
               <code class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded text-xs">{{ coupon.code }}</code>
             </td>
-            <td class="px-4 py-3 hidden md:table-cell text-sm text-gray-700">{{ coupon.percent }}% off</td>
+            <td class="px-4 py-3 hidden md:table-cell text-sm text-gray-700">{{ t('admin.couponsPage.discountDisplay', { n: coupon.percent }) }}</td>
             <td class="px-4 py-3 hidden md:table-cell text-sm text-gray-500">{{ formatDate(coupon.due_date) }}</td>
             <td class="px-4 py-3">
               <Badge :variant="coupon.is_enabled ? 'success' : 'outline'">

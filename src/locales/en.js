@@ -12,11 +12,13 @@ export default {
     reservationPhone: 'Reservation',
     businessHours: 'Business Hours',
     openMap: 'Open in Google Maps →',
+    mapTitle: 'Restaurant Location Map',
   },
 
   home: {
     orderNow: 'Order Now',
     noBanners: 'No banners configured',
+    ourFeatures: 'Our Features',
   },
 
   menu: {
@@ -61,6 +63,7 @@ export default {
     namePlaceholder: 'Enter your name',
     phone: 'Phone',
     phonePlaceholder: 'Enter phone number',
+    email: 'Email',
     emailPlaceholder: 'Enter email address',
     pickupAddress: 'Pickup Address',
     addressPlaceholder: 'Enter address',
@@ -76,6 +79,7 @@ export default {
     contactInfo: 'Contact Info',
     name: 'Name: ',
     phone: 'Phone: ',
+    email: 'Email: ',
     address: 'Address: ',
     paid: 'Payment Complete',
     payNow: 'Pay Now',
@@ -243,6 +247,7 @@ export default {
       expiry: 'Expires',
       noCoupons: 'No coupons yet',
       discountPercent: 'Discount % (1-100)',
+      discountDisplay: '{n}% off',
       enableCoupon: 'Enable coupon',
       deleteConfirm: 'Delete this coupon?',
     },
@@ -306,6 +311,9 @@ export default {
       bgSettings: 'Background',
       testLink: 'Test Link',
       linkHint: 'Use /menu for internal links, or full URL for external',
+      defaultTitle: 'Ready to Enjoy Great Food?',
+      defaultDesc: 'Browse our menu, pick your favourite dishes and start your Japanese culinary journey now',
+      defaultBtnText: 'View Our Menu',
     },
 
     footerPage: {

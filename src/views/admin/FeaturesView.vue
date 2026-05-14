@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useFeaturesStore } from '@/stores/features'
 import { useToastStore } from '@/stores/toast'
 import { useI18n } from 'vue-i18n'
